@@ -19,6 +19,16 @@ describe('Clinic System Integration (E2E)', () => {
     app = moduleFixture.createNestApplication();
     prisma = moduleFixture.get<PrismaService>(PrismaService);
     await app.init();
+
+    // Ensure default roles exist
+    const roles = ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'PATIENT'];
+    for (const roleName of roles) {
+      await prisma.role.upsert({
+        where: { name: roleName },
+        update: {},
+        create: { name: roleName, roleType: roleName as any },
+      });
+    }
   });
 
   afterAll(async () => {
