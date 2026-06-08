@@ -50,24 +50,24 @@ export default function DoctorsPage() {
 
   const columns = [
     {
-      header: 'Specialist',
+      header: 'الأخصائي',
       accessorKey: 'fullName',
       cell: (item: any) => (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-row-reverse">
           <div className="w-12 h-12 rounded-[1.25rem] bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/5">
              <Stethoscope size={24} />
           </div>
           <div>
-            <p className="font-black text-slate-800 dark:text-zinc-200 text-sm">{item.fullName}</p>
-            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5">
-              {item.specialties?.map((s: any) => s.name).join(', ') || 'General'}
+            <p className="font-black text-slate-800 dark:text-zinc-200 text-sm text-right">{item.fullName}</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5 text-right">
+              {item.specialties?.map((s: any) => s.name).join(', ') || 'عام'}
             </p>
           </div>
         </div>
       )
     },
     {
-      header: 'License ID',
+      header: 'رقم الترخيص',
       accessorKey: 'licenseNumber',
       cell: (item: any) => (
         <span className="font-mono text-xs font-bold text-slate-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-md">
@@ -76,22 +76,22 @@ export default function DoctorsPage() {
       )
     },
     {
-      header: 'Contact',
+      header: 'بيانات الاتصال',
       accessorKey: 'user',
       cell: (item: any) => (
-        <div className="flex items-center gap-1.5 text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-muted-foreground flex-row-reverse">
           <Mail className="w-3.5 h-3.5" />
-          <span className="text-xs font-bold">{item.user?.email || 'N/A'}</span>
+          <span className="text-xs font-bold">{item.user?.email || 'غير متوفر'}</span>
         </div>
       )
     },
     {
-      header: 'Availability',
+      header: 'الحالة',
       accessorKey: 'status',
       cell: (item: any) => (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/25">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/25 flex-row-reverse">
            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-           Active
+           نشط
         </span>
       )
     },
@@ -110,39 +110,39 @@ export default function DoctorsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-8" dir="rtl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-zinc-100">Medical Staff Registry</h1>
-            <p className="text-muted-foreground mt-1 font-medium italic">Manage credentials and department assignments for all specialists.</p>
+            <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-zinc-100">سجل الكادر الطبي</h1>
+            <p className="text-muted-foreground mt-1 font-medium italic">إدارة المؤهلات وتعيينات الأقسام لجميع المتخصصين والأطباء بالعيادة.</p>
           </div>
           <Button 
             onClick={() => setIsOnboardOpen(true)}
             className="font-black h-12 px-8 rounded-2xl shadow-xl shadow-primary/20 uppercase tracking-widest text-xs"
           >
-            <UserPlus className="w-4 h-4 mr-2" /> Onboard Specialist
+            <UserPlus className="w-4 h-4 ml-2" /> إضافة طبيب جديد
           </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 bg-white dark:bg-zinc-900 p-5 rounded-[2rem] border sub-border shadow-sm">
           <div className="relative flex-1 w-full max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search specialists by name, specialty, or license..." 
-              className="pl-12 h-12 text-sm rounded-xl border-none bg-accent/30 focus:ring-2 ring-primary/20" 
+              placeholder="البحث عن طبيب بالاسم أو التخصص أو الترخيص..." 
+              className="pr-12 pl-4 h-12 text-sm rounded-xl border-none bg-accent/30 focus:ring-2 ring-primary/20 text-right" 
             />
           </div>
           
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto flex-row-reverse">
             <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
             <select
               value={selectedSpecialty}
               onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="h-12 px-4 rounded-xl border-none bg-accent/30 text-sm font-bold outline-none focus:ring-2 ring-primary/20 min-w-[180px] cursor-pointer text-slate-700 dark:text-zinc-300 dark:bg-zinc-800"
+              className="h-12 px-4 rounded-xl border-none bg-accent/30 text-sm font-bold outline-none focus:ring-2 ring-primary/20 min-w-[180px] cursor-pointer text-slate-700 dark:text-zinc-300 dark:bg-zinc-800 text-right"
             >
-              <option value="All">All Specialties</option>
+              <option value="All">جميع التخصصات</option>
               {specialties?.map((spec: any) => (
                 <option key={spec.id} value={spec.name}>
                   {spec.name}
@@ -157,7 +157,7 @@ export default function DoctorsPage() {
             <div className="h-[400px] flex items-center justify-center bg-white dark:bg-zinc-900 rounded-[2.5rem] border sub-border">
                <div className="flex flex-col items-center gap-4">
                   <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Consulting Registry...</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">جاري تحميل سجل الأطباء...</p>
                </div>
             </div>
           ) : (

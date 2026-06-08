@@ -98,7 +98,7 @@ export default function AppointmentsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      addToast('Appointment status updated', 'success');
+      addToast('تم تحديث حالة الموعد بنجاح!', 'success');
       setIsDetailModalOpen(false);
     }
   });
@@ -170,12 +170,12 @@ export default function AppointmentsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-8" dir="rtl">
         {/* Advanced Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-black tracking-tight">Clinical Scheduler</h1>
-            <p className="text-muted-foreground mt-1 font-medium italic">Synchronized management of medical appointments and specialist availability.</p>
+            <h1 className="text-3xl font-black tracking-tight text-slate-800">جدولة المواعيد السريرية</h1>
+            <p className="text-muted-foreground mt-1 font-medium italic">إدارة متزامنة للمواعيد الطبية وتوافر الأطباء المتخصصين.</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
@@ -187,7 +187,7 @@ export default function AppointmentsPage() {
                     viewMode === 'calendar' ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-accent text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon className="w-3.5 h-3.5" /> Calendar
+                  <CalendarIcon className="w-3.5 h-3.5" /> التقويم
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
@@ -196,26 +196,26 @@ export default function AppointmentsPage() {
                     viewMode === 'list' ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-accent text-muted-foreground"
                   )}
                 >
-                  <List className="w-3.5 h-3.5" /> List View
+                  <List className="w-3.5 h-3.5" /> عرض القائمة
                 </button>
              </div>
              
              <div className="h-10 w-px bg-border mx-2 hidden md:block" />
              
              <Button 
-               variant="premium" 
-               size="sm" 
-               className="font-black uppercase tracking-widest text-[10px] h-11 px-6 rounded-xl"
-               onClick={handleExport}
+                variant="premium" 
+                size="sm" 
+                className="font-black uppercase tracking-widest text-[10px] h-11 px-6 rounded-xl"
+                onClick={handleExport}
              >
-                <Download className="w-4 h-4 mr-2" /> Export
+                <Download className="w-4 h-4 ml-2" /> تصدير البيانات
              </Button>
              <Button 
-               size="sm" 
-               className="font-black uppercase tracking-widest text-[10px] h-11 px-6 rounded-xl shadow-xl shadow-primary/20" 
-               onClick={() => setIsBookModalOpen(true)}
+                size="sm" 
+                className="font-black uppercase tracking-widest text-[10px] h-11 px-6 rounded-xl shadow-xl shadow-primary/20" 
+                onClick={() => setIsBookModalOpen(true)}
              >
-                <Plus className="w-4 h-4 mr-2" /> Book Visit
+                <Plus className="w-4 h-4 mr-2" /> حجز موعد زيارة
              </Button>
           </div>
         </div>
@@ -225,27 +225,27 @@ export default function AppointmentsPage() {
            {/* Sidebar Filter */}
            <div className="hidden xl:block space-y-6">
               <Card className="p-8 premium-card bg-white dark:bg-zinc-900 border sub-border rounded-[2rem]">
-                 <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <Search className="w-4 h-4 text-primary" /> Advanced Search
+                 <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2 flex-row-reverse">
+                    <Search className="w-4 h-4 text-primary" /> البحث المتقدم
                  </h3>
                  <div className="space-y-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Search Keywords</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mr-1 text-right block">كلمات البحث المفتاحية</label>
                        <Input 
-                        placeholder="Patient or Doctor..." 
-                        className="h-12 text-sm rounded-xl"
+                        placeholder="المريض أو الطبيب..." 
+                        className="h-12 text-sm rounded-xl text-right"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Specialty</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mr-1 text-right block">التخصص</label>
                        <select 
                          value={selectedSpecialty}
                          onChange={(e) => setSelectedSpecialty(e.target.value)}
-                         className="w-full h-12 bg-accent/30 border-none rounded-xl px-4 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
+                         className="w-full h-12 bg-accent/30 border-none rounded-xl px-4 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20 text-right"
                        >
-                          <option value="All">All Specializations</option>
+                          <option value="All">جميع التخصصات</option>
                           {specializations.map((spec) => (
                             <option key={spec} value={spec}>{spec}</option>
                           ))}
@@ -259,21 +259,21 @@ export default function AppointmentsPage() {
                         setSelectedSpecialty('All');
                       }}
                     >
-                      Reset filters
+                      إعادة تعيين الفلاتر
                     </Button>
                  </div>
               </Card>
 
-              <Card className="p-8 bg-primary text-white border-none rounded-[2rem] shadow-2xl shadow-primary/20 relative overflow-hidden">
-                 <div className="absolute top-0 right-0 p-8 opacity-10 -mr-8 -mt-8 rotate-12"><Clock size={100} /></div>
-                 <h3 className="text-sm font-black uppercase tracking-widest mb-6 relative z-10">Today's Load</h3>
+              <Card className="p-8 bg-primary text-white border-none rounded-[2rem] shadow-2xl shadow-primary/20 relative overflow-hidden text-right">
+                 <div className="absolute top-0 left-0 p-8 opacity-10 -ml-8 -mt-8 rotate-12"><Clock size={100} /></div>
+                 <h3 className="text-sm font-black uppercase tracking-widest mb-6 relative z-10">نشاط اليوم</h3>
                  <div className="space-y-4 mt-4 relative z-10">
-                    <div className="flex justify-between items-center py-3 border-b border-white/10">
-                       <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">Scheduled</span>
+                    <div className="flex justify-between items-center py-3 border-b border-white/10 flex-row-reverse">
+                       <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">المجدولة</span>
                        <span className="font-black text-2xl">{filteredAppointmentsData?.length || 0}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-white/10">
-                       <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">In Progress</span>
+                    <div className="flex justify-between items-center py-3 border-b border-white/10 flex-row-reverse">
+                       <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">قيد الإجراء</span>
                        <span className="font-black text-2xl text-emerald-300">
                           {filteredAppointmentsData?.filter((a: any) => a.status === 'IN_PROGRESS').length}
                        </span>
@@ -288,7 +288,7 @@ export default function AppointmentsPage() {
                 <div className="h-[800px] flex items-center justify-center bg-white dark:bg-zinc-900 rounded-[2.5rem] border sub-border">
                    <div className="flex flex-col items-center gap-4">
                       <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Consulting Schedule...</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">جاري تحميل الجدول...</p>
                    </div>
                 </div>
               ) : viewMode === 'calendar' ? (
@@ -308,31 +308,34 @@ export default function AppointmentsPage() {
                      filteredAppointmentsData.map((apt: any) => (
                        <Card key={apt.id} className="group rounded-[2rem] border sub-border hover:border-primary/50 transition-all overflow-hidden shadow-sm">
                           <CardContent className="p-0">
-                             <div className="flex flex-col md:flex-row items-center gap-8 p-8">
+                             <div className="flex flex-col md:flex-row items-center gap-8 p-8 flex-row-reverse">
                                 <div className="w-16 h-16 rounded-[1.5rem] bg-accent flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
                                    <User size={28} />
                                 </div>
-                                <div className="flex-1 text-center md:text-left">
-                                   <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-2">
+                                <div className="flex-1 text-center md:text-right">
+                                   <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mb-2 flex-row-reverse">
                                       <span className={cn(
                                          "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border",
                                          apt.status === 'COMPLETED' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
                                          apt.status === 'SCHEDULED' ? "bg-primary/5 text-primary border-primary/10" :
                                          "bg-amber-50 text-amber-600 border-amber-100"
                                       )}>
-                                         {apt.status}
+                                         {apt.status === 'COMPLETED' ? 'مكتمل' :
+                                          apt.status === 'SCHEDULED' ? 'مجدول' :
+                                          apt.status === 'IN_PROGRESS' ? 'قيد الإجراء' :
+                                          apt.status === 'CANCELLED' ? 'ملغي' : apt.status}
                                       </span>
                                       <span className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">
-                                         {format(new Date(apt.startTime), 'MMM dd, hh:mm aa')}
+                                         {format(new Date(apt.startTime), 'yyyy/MM/dd, hh:mm aa')}
                                       </span>
                                    </div>
                                    <h3 className="text-xl font-black text-slate-800">{apt.patient?.fullName}</h3>
-                                   <p className="text-sm text-muted-foreground font-bold mt-1">Specialist: {apt.doctor?.fullName}</p>
+                                   <p className="text-sm text-muted-foreground font-bold mt-1">الطبيب المعالج: {apt.doctor?.fullName}</p>
                                 </div>
                                 <div className="flex gap-3">
-                                   <Button variant="ghost" className="rounded-xl h-12 px-6 font-black uppercase tracking-widest text-[10px] border sub-border" onClick={() => handleEventClick({ event: { id: apt.id, title: apt.patient.fullName, start: apt.startTime, end: apt.endTime, extendedProps: { ...apt, patientName: apt.patient.fullName, doctorName: apt.doctor.fullName } } })}>Details</Button>
+                                   <Button variant="ghost" className="rounded-xl h-12 px-6 font-black uppercase tracking-widest text-[10px] border sub-border" onClick={() => handleEventClick({ event: { id: apt.id, title: apt.patient.fullName, start: apt.startTime, end: apt.endTime, extendedProps: { ...apt, patientName: apt.patient.fullName, doctorName: apt.doctor.fullName } } })}>التفاصيل</Button>
                                    {apt.status === 'SCHEDULED' && (
-                                     <Button className="rounded-xl h-12 px-6 font-black uppercase tracking-widest text-[10px]" onClick={() => statusMutation.mutate({ id: apt.id, status: 'COMPLETED' })}>Complete</Button>
+                                     <Button className="rounded-xl h-12 px-6 font-black uppercase tracking-widest text-[10px]" onClick={() => statusMutation.mutate({ id: apt.id, status: 'COMPLETED' })}>إكمال الموعد</Button>
                                    )}
                                 </div>
                              </div>

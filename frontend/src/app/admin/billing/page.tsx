@@ -297,7 +297,7 @@ export default function BillingPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-8" dir="rtl">
         {/* Financial Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>

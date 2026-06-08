@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-8" dir="rtl">
         <div className="flex justify-between items-center">
            <div>
               <h1 className="text-3xl font-bold tracking-tight text-slate-800">إعدادات النظام</h1>
