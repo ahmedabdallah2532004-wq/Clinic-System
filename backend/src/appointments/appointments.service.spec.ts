@@ -6,7 +6,7 @@ import { AppointmentStatus } from '@prisma/client';
 
 describe('AppointmentsService', () => {
   let service: AppointmentsService;
-  
+
   const mockPrisma = {
     appointment: {
       findFirst: jest.fn(),
@@ -17,7 +17,7 @@ describe('AppointmentsService', () => {
     patient: {
       findFirst: jest.fn(),
       create: jest.fn(),
-    }
+    },
   };
 
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('AppointmentsService', () => {
     }).compile();
 
     service = module.get<AppointmentsService>(AppointmentsService);
-    
+
     // Reset jest mocks
     jest.clearAllMocks();
   });
@@ -47,7 +47,7 @@ describe('AppointmentsService', () => {
         patientId: 'patient-1',
         doctorId: 'doctor-1',
         startTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
-        endTime: new Date(Date.now() + 7200000).toISOString(),   // 2 hours from now
+        endTime: new Date(Date.now() + 7200000).toISOString(), // 2 hours from now
         notes: 'Checkup',
         status: AppointmentStatus.SCHEDULED,
       };
@@ -70,7 +70,9 @@ describe('AppointmentsService', () => {
       };
 
       // Mock doctor overlap
-      mockPrisma.appointment.findFirst.mockResolvedValueOnce({ id: 'existing-app' });
+      mockPrisma.appointment.findFirst.mockResolvedValueOnce({
+        id: 'existing-app',
+      });
 
       await expect(service.create(dto)).rejects.toThrow(ConflictException);
       expect(mockPrisma.appointment.findFirst).toHaveBeenCalledTimes(1);
@@ -102,8 +104,8 @@ describe('AppointmentsService', () => {
         service.reschedule(
           'non-existent',
           new Date(Date.now() + 3600000).toISOString(),
-          new Date(Date.now() + 7200000).toISOString()
-        )
+          new Date(Date.now() + 7200000).toISOString(),
+        ),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -145,10 +147,13 @@ describe('AppointmentsService', () => {
       const newEnd = new Date(Date.now() + 7200000).toISOString();
 
       mockPrisma.appointment.findUnique.mockResolvedValue(existingAppt);
-      mockPrisma.appointment.findFirst.mockResolvedValue({ id: 'conflicting-appt' });
+      mockPrisma.appointment.findFirst.mockResolvedValue({
+        id: 'conflicting-appt',
+      });
 
-      await expect(service.reschedule('app-1', newStart, newEnd)).rejects.toThrow(ConflictException);
+      await expect(
+        service.reschedule('app-1', newStart, newEnd),
+      ).rejects.toThrow(ConflictException);
     });
   });
 });
-

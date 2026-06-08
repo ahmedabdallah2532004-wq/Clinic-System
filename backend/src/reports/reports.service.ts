@@ -27,8 +27,14 @@ export class ReportsService {
     doc.moveDown(0.5);
 
     data.items.forEach((item, index) => {
-      doc.fontSize(12).text(`${index + 1}. ${item.medicationName} - ${item.dosage}`);
-      doc.fontSize(10).text(`   Frequency: ${item.frequency} | Duration: ${item.duration}`, { indent: 20 });
+      doc
+        .fontSize(12)
+        .text(`${index + 1}. ${item.medicationName} - ${item.dosage}`);
+      doc
+        .fontSize(10)
+        .text(`   Frequency: ${item.frequency} | Duration: ${item.duration}`, {
+          indent: 20,
+        });
       if (item.instructions) {
         doc.text(`   Instructions: ${item.instructions}`, { indent: 20 });
       }
@@ -37,7 +43,9 @@ export class ReportsService {
 
     // Footer
     doc.moveDown(2);
-    doc.fontSize(10).text('Digitally signed by Clinic Management System', { align: 'right' });
+    doc
+      .fontSize(10)
+      .text('Digitally signed by Clinic Management System', { align: 'right' });
 
     doc.end();
   }
@@ -64,7 +72,7 @@ export class ReportsService {
     doc.font('Helvetica');
 
     let y = 200;
-    data.items.forEach(item => {
+    data.items.forEach((item) => {
       doc.text(item.serviceName, 50, y);
       doc.text(item.quantity.toString(), 300, y);
       doc.text(`$${item.unitPrice}`, 400, y);
@@ -74,7 +82,9 @@ export class ReportsService {
 
     doc.lineCap('butt').moveTo(50, y).lineTo(550, y).stroke();
     y += 10;
-    doc.font('Helvetica-Bold').text(`Grand Total: $${data.totalAmount}`, 400, y);
+    doc
+      .font('Helvetica-Bold')
+      .text(`Grand Total: $${data.totalAmount}`, 400, y);
 
     doc.end();
   }
@@ -86,10 +96,10 @@ export class ReportsService {
         patient: true,
         items: {
           include: {
-            service: true
-          }
-        }
-      }
+            service: true,
+          },
+        },
+      },
     });
     if (!invoice) throw new NotFoundException('Invoice not found');
     return {
@@ -97,12 +107,12 @@ export class ReportsService {
       patientName: invoice.patient.fullName,
       createdAt: invoice.createdAt,
       totalAmount: Number(invoice.totalAmount),
-      items: invoice.items.map(item => ({
+      items: invoice.items.map((item) => ({
         serviceName: item.service.name,
         quantity: item.quantity,
         unitPrice: Number(item.unitPrice),
-        lineTotal: Number(item.unitPrice) * item.quantity
-      }))
+        lineTotal: Number(item.unitPrice) * item.quantity,
+      })),
     };
   }
 
@@ -112,34 +122,31 @@ export class ReportsService {
       include: {
         patient: true,
         doctor: true,
-        items: true
-      }
+        items: true,
+      },
     });
     if (!prescription) throw new NotFoundException('Prescription not found');
     return {
       doctorName: prescription.doctor.fullName,
       patientName: prescription.patient.fullName,
-      items: prescription.items.map(item => ({
+      items: prescription.items.map((item) => ({
         medicationName: item.medicationName,
         dosage: item.dosage,
         frequency: item.frequency,
         duration: item.duration,
-        instructions: item.instructions
-      }))
+        instructions: item.instructions,
+      })),
     };
   }
 
   async getDoctorDailyData(doctorIdOrUserId: string) {
     const doctor = await this.prisma.doctor.findFirst({
       where: {
-        OR: [
-          { id: doctorIdOrUserId },
-          { userId: doctorIdOrUserId }
-        ]
+        OR: [{ id: doctorIdOrUserId }, { userId: doctorIdOrUserId }],
       },
       include: {
-        specialties: true
-      }
+        specialties: true,
+      },
     });
     if (!doctor) throw new NotFoundException('Doctor not found');
 
@@ -153,26 +160,29 @@ export class ReportsService {
         doctorId: doctor.id,
         startTime: {
           gte: todayStart,
-          lte: todayEnd
-        }
+          lte: todayEnd,
+        },
       },
       include: {
-        patient: true
+        patient: true,
       },
-      orderBy: { startTime: 'asc' }
+      orderBy: { startTime: 'asc' },
     });
 
     return {
       doctorName: doctor.fullName,
-      specialty: doctor.specialties.map(s => s.name).join(', ') || 'General',
+      specialty: doctor.specialties.map((s) => s.name).join(', ') || 'General',
       date: new Date().toLocaleDateString('ar-EG'),
       cases: appointments.map((appt, index) => ({
         index: index + 1,
-        time: new Date(appt.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: new Date(appt.startTime).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
         patientName: appt.patient.fullName,
         complaint: appt.notes || 'Routine Checkup',
-        status: appt.status
-      }))
+        status: appt.status,
+      })),
     };
   }
 
@@ -221,7 +231,9 @@ export class ReportsService {
 
     doc.lineCap('butt').moveTo(50, y).lineTo(550, y).stroke();
     y += 10;
-    doc.font('Helvetica-Bold').text(`Total Cases Scheduled: ${data.cases.length}`, 50, y);
+    doc
+      .font('Helvetica-Bold')
+      .text(`Total Cases Scheduled: ${data.cases.length}`, 50, y);
 
     doc.end();
   }
@@ -252,8 +264,8 @@ export class ReportsService {
         totalEncounters: 1240,
         averageWaitTime: '12 min',
         patientSatisfaction: '94%',
-        noShowRate: '4.2%'
-      }
+        noShowRate: '4.2%',
+      },
     };
   }
 }

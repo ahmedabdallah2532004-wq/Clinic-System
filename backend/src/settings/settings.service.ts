@@ -39,14 +39,26 @@ export class SettingsService {
 
   async updateSettings(data: any) {
     const p = this.prisma as any;
-    const current = await p.clinicSetting.findUnique({ where: { id: 'default' } });
+    const current = await p.clinicSetting.findUnique({
+      where: { id: 'default' },
+    });
 
-    const clinicName = data.clinicName !== undefined ? data.clinicName : (current?.clinicName || 'عيادة نُخبة الطبي');
-    const logoUrl = data.clinicLogo !== undefined ? data.clinicLogo : current?.logoUrl;
-    const clinicPhone = data.phone !== undefined ? data.phone : current?.clinicPhone;
-    const clinicEmail = data.email !== undefined ? data.email : current?.clinicEmail;
-    const clinicAddress = data.address !== undefined ? data.address : current?.clinicAddress;
-    const vatPercentage = data.vatPercentage !== undefined ? Number(data.vatPercentage) : (current?.vatPercentage || 15);
+    const clinicName =
+      data.clinicName !== undefined
+        ? data.clinicName
+        : current?.clinicName || 'عيادة نُخبة الطبي';
+    const logoUrl =
+      data.clinicLogo !== undefined ? data.clinicLogo : current?.logoUrl;
+    const clinicPhone =
+      data.phone !== undefined ? data.phone : current?.clinicPhone;
+    const clinicEmail =
+      data.email !== undefined ? data.email : current?.clinicEmail;
+    const clinicAddress =
+      data.address !== undefined ? data.address : current?.clinicAddress;
+    const vatPercentage =
+      data.vatPercentage !== undefined
+        ? Number(data.vatPercentage)
+        : current?.vatPercentage || 15;
 
     const updated = await p.clinicSetting.upsert({
       where: { id: 'default' },

@@ -27,7 +27,7 @@ export class AuditInterceptor implements NestInterceptor {
                 action: `${method} ${url}`,
                 entity: this.getEntityName(url),
                 entityId: data?.id || body?.id || 'N/A',
-                oldData: {}, 
+                oldData: {},
                 newData: body,
                 ipAddress: request.ip,
                 userAgent: request.get('user-agent'),

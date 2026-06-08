@@ -26,11 +26,11 @@ import { EncountersService } from './encounters/encounters.service';
 
 @Module({
   imports: [
-    PrismaModule, 
-    AuthModule, 
-    UsersModule, 
-    PatientsModule, 
-    AppointmentsModule, 
+    PrismaModule,
+    AuthModule,
+    UsersModule,
+    PatientsModule,
+    AppointmentsModule,
     BillingModule,
     DoctorsModule,
     ReportsModule,
@@ -38,9 +38,14 @@ import { EncountersService } from './encounters/encounters.service';
     FilesModule,
     SettingsModule,
     MedicalServicesModule,
-    CommonModule
+    CommonModule,
   ],
-  controllers: [AppController, StatsController, PrescriptionsController, EncountersController],
+  controllers: [
+    AppController,
+    StatsController,
+    PrescriptionsController,
+    EncountersController,
+  ],
   providers: [
     AppService,
     {

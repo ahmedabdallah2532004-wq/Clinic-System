@@ -35,7 +35,7 @@ export class AuditLogService {
     return this.prisma.auditLog.findMany({
       take: 20,
       orderBy: { createdAt: 'desc' },
-      include: { user: { select: { email: true } } }
+      include: { user: { select: { email: true } } },
     });
   }
 }

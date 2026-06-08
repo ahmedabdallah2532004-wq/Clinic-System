@@ -14,9 +14,9 @@ export class UsersService {
     });
   }
 
-  async create(data: { 
-    email: string; 
-    password: string; 
+  async create(data: {
+    email: string;
+    password: string;
     roles?: UserRole[];
     role?: UserRole;
     fullName?: string;
@@ -26,34 +26,45 @@ export class UsersService {
   }) {
     // 1. Validation
     if (data.password.length < 6) {
-       throw new ConflictException('Password must be at least 6 characters long');
+      throw new ConflictException(
+        'Password must be at least 6 characters long',
+      );
     }
 
-    const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
     if (existingUser) {
-       throw new ConflictException('هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.');
+      throw new ConflictException(
+        'هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const roleNames = data.roles || (data.role ? [data.role] : [UserRole.PATIENT]);
-    
+    const roleNames =
+      data.roles || (data.role ? [data.role] : [UserRole.PATIENT]);
+
     return this.prisma.user.create({
       data: {
         email: data.email,
         passwordHash: hashedPassword,
         roles: {
-          connect: roleNames.map(r => ({ name: r }))
+          connect: roleNames.map((r) => ({ name: r })),
         },
-        ...(roleNames.includes(UserRole.PATIENT) && data.fullName ? {
-          patient: {
-            create: {
-              fullName: data.fullName,
-              dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : new Date(),
-              gender: (data.gender?.toUpperCase() as any) || 'OTHER',
-              contactNumber: data.contactNumber || '',
+        ...(roleNames.includes(UserRole.PATIENT) && data.fullName
+          ? {
+              patient: {
+                create: {
+                  fullName: data.fullName,
+                  dateOfBirth: data.dateOfBirth
+                    ? new Date(data.dateOfBirth)
+                    : new Date(),
+                  gender: (data.gender?.toUpperCase() as any) || 'OTHER',
+                  contactNumber: data.contactNumber || '',
+                },
+              },
             }
-          }
-        } : {})
+          : {}),
       },
       include: { roles: true },
     });
@@ -76,7 +87,7 @@ export class UsersService {
 
   async findAll() {
     return this.prisma.user.findMany({
-      include: { 
+      include: {
         roles: true,
         patient: true,
         doctor: true,
@@ -91,14 +102,14 @@ export class UsersService {
         roles: true,
         patient: true,
         doctor: true,
-      }
+      },
     });
     if (!user) throw new ConflictException('User not found');
 
-    const roleNames = user.roles.map(r => r.name);
+    const roleNames = user.roles.map((r) => r.name);
     let fullName = '';
     let contactNumber = '';
-    
+
     if (roleNames.includes('PATIENT') && user.patient) {
       fullName = user.patient.fullName;
       contactNumber = user.patient.contactNumber;
@@ -120,18 +131,21 @@ export class UsersService {
       fullName,
       contactNumber,
       patient: user.patient,
-      doctor: user.doctor
+      doctor: user.doctor,
     };
   }
 
-  async updateProfile(userId: string, data: { fullName?: string; contactNumber?: string }) {
+  async updateProfile(
+    userId: string,
+    data: { fullName?: string; contactNumber?: string },
+  ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { roles: true, patient: true, doctor: true }
+      include: { roles: true, patient: true, doctor: true },
     });
     if (!user) throw new ConflictException('User not found');
 
-    const roleNames = user.roles.map(r => r.name);
+    const roleNames = user.roles.map((r) => r.name);
 
     if (roleNames.includes('PATIENT') && user.patient) {
       await this.prisma.patient.update({
@@ -139,14 +153,14 @@ export class UsersService {
         data: {
           fullName: data.fullName || user.patient.fullName,
           contactNumber: data.contactNumber || user.patient.contactNumber,
-        }
+        },
       });
     } else if (roleNames.includes('DOCTOR') && user.doctor) {
       await this.prisma.doctor.update({
         where: { id: user.doctor.id },
         data: {
           fullName: data.fullName || user.doctor.fullName,
-        }
+        },
       });
     }
 

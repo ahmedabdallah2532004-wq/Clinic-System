@@ -9,7 +9,7 @@ describe('Clinic System Integration (E2E)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
   let authToken: string;
-  let testUserEmail = `test-integration-${Date.now()}@clinic.com`;
+  const testUserEmail = `test-integration-${Date.now()}@clinic.com`;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -25,7 +25,7 @@ describe('Clinic System Integration (E2E)', () => {
     // Clean up test user
     const user = await prisma.user.findUnique({
       where: { email: testUserEmail },
-      include: { patient: true }
+      include: { patient: true },
     });
 
     if (user) {
@@ -54,7 +54,7 @@ describe('Clinic System Integration (E2E)', () => {
         fullName: 'Integration Test Patient',
         dateOfBirth: '1995-05-15',
         gender: 'MALE',
-        contactNumber: '1112223333'
+        contactNumber: '1112223333',
       })
       .expect(HttpStatus.CREATED)
       .expect((res) => {
@@ -69,7 +69,7 @@ describe('Clinic System Integration (E2E)', () => {
       .post('/auth/login')
       .send({
         email: testUserEmail,
-        password: 'password123'
+        password: 'password123',
       })
       .expect(HttpStatus.CREATED);
 
@@ -95,7 +95,7 @@ describe('Clinic System Integration (E2E)', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .send({
         invoiceIds: [],
-        method: 'CARD'
+        method: 'CARD',
       })
       .expect(HttpStatus.CONFLICT); // Validation checks throw ConflictException on empty array
   });

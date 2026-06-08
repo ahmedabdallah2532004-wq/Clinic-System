@@ -10,7 +10,7 @@ async function runTests() {
   try {
     const doctorId = '7561f956-655b-432a-bc95-072228807d9b'; // Mock UUID
     const patientId = '8561f956-655b-432a-bc95-072228807d9c';
-    
+
     console.log('Booking first appointment (09:00 - 10:00)...');
     await prisma.appointment.create({
       data: {
@@ -22,7 +22,9 @@ async function runTests() {
       },
     });
 
-    console.log('Attempting to book overlapping appointment (09:30 - 10:30)...');
+    console.log(
+      'Attempting to book overlapping appointment (09:30 - 10:30)...',
+    );
     await prisma.appointment.create({
       data: {
         doctorId,

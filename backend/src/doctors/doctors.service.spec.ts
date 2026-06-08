@@ -57,13 +57,16 @@ describe('DoctorsService', () => {
           userId: 'user-1',
           fullName: 'Dr. John',
           licenseNumber: 'LIC123',
-        })
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
     it('should successfully create doctor profile', async () => {
       mockPrisma.doctor.findUnique.mockResolvedValue(null);
-      mockPrisma.doctor.create.mockResolvedValue({ id: 'doc-1', fullName: 'Dr. John' });
+      mockPrisma.doctor.create.mockResolvedValue({
+        id: 'doc-1',
+        fullName: 'Dr. John',
+      });
 
       const result = await service.create({
         userId: 'user-1',
@@ -79,7 +82,9 @@ describe('DoctorsService', () => {
   describe('findOne', () => {
     it('should throw NotFoundException if doctor does not exist', async () => {
       mockPrisma.doctor.findUnique.mockResolvedValue(null);
-      await expect(service.findOne('invalid-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('invalid-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should return doctor object if found', async () => {
@@ -100,7 +105,7 @@ describe('DoctorsService', () => {
           email: 'test@clinic.com',
           fullName: 'Dr. John',
           licenseNumber: 'LIC123',
-        })
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -113,7 +118,7 @@ describe('DoctorsService', () => {
           email: 'test@clinic.com',
           fullName: 'Dr. John',
           licenseNumber: 'LIC123',
-        })
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -127,7 +132,7 @@ describe('DoctorsService', () => {
           fullName: 'Dr. John',
           licenseNumber: 'LIC123',
           password: '123',
-        })
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -135,7 +140,10 @@ describe('DoctorsService', () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.doctor.findUnique.mockResolvedValue(null);
 
-      mockPrisma.user.create.mockResolvedValue({ id: 'user-1', email: 'test@clinic.com' });
+      mockPrisma.user.create.mockResolvedValue({
+        id: 'user-1',
+        email: 'test@clinic.com',
+      });
       mockPrisma.doctor.create.mockResolvedValue({
         id: 'doc-1',
         fullName: 'Dr. John',

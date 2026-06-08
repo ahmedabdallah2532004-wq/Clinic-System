@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Req,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PatientsService } from './patients.service.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -29,7 +41,12 @@ export class PatientsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.RECEPTIONIST, UserRole.PATIENT)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.DOCTOR,
+    UserRole.RECEPTIONIST,
+    UserRole.PATIENT,
+  )
   findOne(@Param('id') id: string) {
     return this.patientsService.findOne(id);
   }
@@ -49,7 +66,10 @@ export class PatientsController {
   @Post(':id/reports')
   @Roles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.RECEPTIONIST)
   @UseInterceptors(FileInterceptor('file'))
-  uploadReport(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+  uploadReport(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     // In a real app, you'd save the file and update the DB
     return {
       message: 'File uploaded successfully',

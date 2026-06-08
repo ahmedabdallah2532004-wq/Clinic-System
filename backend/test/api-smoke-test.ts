@@ -13,7 +13,7 @@ async function testRBAC() {
   console.log('\n--- Test 1: Patient -> Admin Endpoints ---');
   try {
     await axios.get(`${BASE_URL}/billing/invoices`, {
-      headers: { Authorization: `Bearer ${patientToken}` }
+      headers: { Authorization: `Bearer ${patientToken}` },
     });
     console.error('❌ FAIL: Patient accessed admin invoices!');
   } catch (e: any) {
@@ -42,7 +42,7 @@ async function testRBAC() {
   try {
     // Assuming /doctors is protected for Admins/Receptionists
     const res = await axios.get(`${BASE_URL}/doctors`, {
-      headers: { Authorization: `Bearer ${adminToken}` }
+      headers: { Authorization: `Bearer ${adminToken}` },
     });
     if (res.status === 200) {
       console.log('✅ PASS: Admin successfully accessed doctors list.');

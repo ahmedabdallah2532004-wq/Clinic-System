@@ -31,19 +31,19 @@ export class PatientsService {
         appointments: {
           orderBy: { startTime: 'desc' },
           take: 5,
-          include: { doctor: true }
+          include: { doctor: true },
         },
         encounters: {
           orderBy: { createdAt: 'desc' },
-          include: { doctor: true }
+          include: { doctor: true },
         },
         prescriptions: {
-          include: { doctor: true, items: true }
+          include: { doctor: true, items: true },
         },
         invoices: {
-          where: { status: 'PENDING' }
-        }
-      }
+          where: { status: 'PENDING' },
+        },
+      },
     });
     if (!patient) throw new NotFoundException('Patient profile not found');
     return patient;
@@ -55,24 +55,24 @@ export class PatientsService {
       include: {
         appointments: {
           orderBy: { startTime: 'desc' },
-          include: { doctor: true }
+          include: { doctor: true },
         },
         encounters: {
           orderBy: { createdAt: 'desc' },
-          include: { 
+          include: {
             doctor: true,
             vitals: true,
             prescription: {
-              include: { items: true }
-            }
-          }
+              include: { items: true },
+            },
+          },
         },
         prescriptions: {
           orderBy: { issuedAt: 'desc' },
-          include: { doctor: true, items: true }
+          include: { doctor: true, items: true },
         },
         files: {
-          orderBy: { createdAt: 'desc' }
+          orderBy: { createdAt: 'desc' },
         },
       },
     });

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { AppointmentsService } from './appointments.service.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { Roles, RolesGuard } from '../auth/roles.guard.js';
@@ -11,13 +19,16 @@ export class AppointmentsController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.RECEPTIONIST, UserRole.PATIENT)
-  create(@Body() body: {
-    patientId: string;
-    doctorId: string;
-    startTime: string;
-    endTime: string;
-    notes?: string;
-  }) {
+  create(
+    @Body()
+    body: {
+      patientId: string;
+      doctorId: string;
+      startTime: string;
+      endTime: string;
+      notes?: string;
+    },
+  ) {
     return this.appointmentsService.create(body);
   }
 
@@ -58,7 +69,13 @@ export class AppointmentsController {
   @Post('block-time')
   @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   blockTime(
-    @Body() body: { doctorId: string; startTime: string; endTime: string; reason?: string },
+    @Body()
+    body: {
+      doctorId: string;
+      startTime: string;
+      endTime: string;
+      reason?: string;
+    },
   ) {
     return this.appointmentsService.blockTime(body);
   }

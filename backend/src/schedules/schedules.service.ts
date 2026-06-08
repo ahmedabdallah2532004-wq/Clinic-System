@@ -5,7 +5,12 @@ import { PrismaService } from '../prisma/prisma.service';
 export class SchedulesService {
   constructor(private prisma: PrismaService) {}
 
-  async setSchedule(doctorId: string, dayOfWeek: number, startTime: string, endTime: string) {
+  async setSchedule(
+    doctorId: string,
+    dayOfWeek: number,
+    startTime: string,
+    endTime: string,
+  ) {
     // Validate day of week (0-6)
     if (dayOfWeek < 0 || dayOfWeek > 6) {
       throw new Error('Invalid day of week');

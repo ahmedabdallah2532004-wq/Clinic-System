@@ -7,12 +7,12 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne(email);
-    if (user && await bcrypt.compare(pass, user.passwordHash)) {
+    if (user && (await bcrypt.compare(pass, user.passwordHash))) {
       const { passwordHash, ...result } = user;
       return result;
     }
@@ -22,7 +22,7 @@ export class AuthService {
   async login(user: any) {
     const roleNames = user.roles?.map((r: any) => r.name) || [];
     const payload = { email: user.email, sub: user.id, roles: roleNames };
-    
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: process.env.JWT_SECRET || 'secretKey',
@@ -42,18 +42,20 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        roles: roleNames
-      }
+        roles: roleNames,
+      },
     };
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedToken = await bcrypt.hash(refreshToken, 10);
-    await this.usersService.update(userId, { hashedRefreshToken: hashedToken } as any);
+    await this.usersService.update(userId, {
+      hashedRefreshToken: hashedToken,
+    });
   }
 
   async refreshTokens(userId: string, refreshToken: string) {
-    const user = await this.usersService.findById(userId) as any;
+    const user = (await this.usersService.findById(userId)) as any;
     if (!user || !user.hashedRefreshToken) {
       throw new UnauthorizedException('Access Denied');
     }
@@ -67,7 +69,7 @@ export class AuthService {
   }
 
   async logout(userId: string) {
-    await this.usersService.update(userId, { hashedRefreshToken: null } as any);
+    await this.usersService.update(userId, { hashedRefreshToken: null });
   }
 
   async register(data: any) {

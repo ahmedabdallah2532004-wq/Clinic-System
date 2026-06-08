@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Res,
+} from '@nestjs/common';
 import { BillingService } from './billing.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
@@ -18,8 +26,14 @@ export class BillingController {
 
   @Post('payments')
   @Roles(UserRole.ADMIN, UserRole.RECEPTIONIST, UserRole.PATIENT)
-  addPayment(@Body() data: { invoiceId: string; amount: number; method: string }) {
-    return this.billingService.addPayment(data.invoiceId, data.amount, data.method);
+  addPayment(
+    @Body() data: { invoiceId: string; amount: number; method: string },
+  ) {
+    return this.billingService.addPayment(
+      data.invoiceId,
+      data.amount,
+      data.method,
+    );
   }
 
   @Post('payments/bulk')

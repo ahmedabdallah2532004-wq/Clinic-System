@@ -16,7 +16,10 @@ export class ReportsController {
   }
 
   @Get('prescription/:id')
-  async getPrescriptionPDF(@Param('id') id: string, @Res() res: express.Response) {
+  async getPrescriptionPDF(
+    @Param('id') id: string,
+    @Res() res: express.Response,
+  ) {
     const data = await this.reportsService.getPrescriptionData(id);
     return this.reportsService.generatePrescriptionPDF(data, res);
   }
@@ -28,7 +31,10 @@ export class ReportsController {
   }
 
   @Get('doctor-daily/:id')
-  async getDoctorDailyPDF(@Param('id') id: string, @Res() res: express.Response) {
+  async getDoctorDailyPDF(
+    @Param('id') id: string,
+    @Res() res: express.Response,
+  ) {
     const data = await this.reportsService.getDoctorDailyData(id);
     return this.reportsService.generateDoctorDailyPDF(data, res);
   }

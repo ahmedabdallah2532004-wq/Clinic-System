@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -18,7 +22,10 @@ export class DoctorsService {
     const existing = await this.prisma.doctor.findUnique({
       where: { userId: data.userId },
     });
-    if (existing) throw new ConflictException('Doctor profile already exists for this user');
+    if (existing)
+      throw new ConflictException(
+        'Doctor profile already exists for this user',
+      );
 
     return this.prisma.doctor.create({
       data: {
@@ -27,7 +34,7 @@ export class DoctorsService {
         licenseNumber: data.licenseNumber,
         bio: data.bio,
         specialties: {
-          connect: data.specialtyIds?.map(id => ({ id })) || [],
+          connect: data.specialtyIds?.map((id) => ({ id })) || [],
         },
       },
       include: {
@@ -86,19 +93,29 @@ export class DoctorsService {
     bio?: string;
     specialtyIds?: number[];
   }) {
-    const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
     if (existingUser) {
-      throw new ConflictException('هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.');
+      throw new ConflictException(
+        'هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.',
+      );
     }
 
-    const existingDoc = await this.prisma.doctor.findUnique({ where: { licenseNumber: data.licenseNumber } });
+    const existingDoc = await this.prisma.doctor.findUnique({
+      where: { licenseNumber: data.licenseNumber },
+    });
     if (existingDoc) {
-      throw new ConflictException('رقم ترخيص الطبيب هذا مسجل بالفعل لطبيب آخر.');
+      throw new ConflictException(
+        'رقم ترخيص الطبيب هذا مسجل بالفعل لطبيب آخر.',
+      );
     }
 
     const password = data.password || 'doctor123';
     if (password.length < 6) {
-      throw new ConflictException('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.');
+      throw new ConflictException(
+        'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -110,9 +127,9 @@ export class DoctorsService {
           email: data.email,
           passwordHash: hashedPassword,
           roles: {
-            connect: { name: 'DOCTOR' }
-          }
-        }
+            connect: { name: 'DOCTOR' },
+          },
+        },
       });
 
       // Create doctor profile
@@ -123,7 +140,7 @@ export class DoctorsService {
           licenseNumber: data.licenseNumber,
           bio: data.bio,
           specialties: {
-            connect: data.specialtyIds?.map(id => ({ id })) || [],
+            connect: data.specialtyIds?.map((id) => ({ id })) || [],
           },
         },
         include: {
@@ -132,9 +149,9 @@ export class DoctorsService {
             select: {
               email: true,
               isActive: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
     });
   }

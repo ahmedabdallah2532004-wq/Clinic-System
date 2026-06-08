@@ -22,7 +22,12 @@ export class EncountersController {
   }
 
   @Get('patient/:id')
-  @Roles(UserRole.ADMIN, UserRole.DOCTOR, UserRole.RECEPTIONIST, UserRole.PATIENT)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.DOCTOR,
+    UserRole.RECEPTIONIST,
+    UserRole.PATIENT,
+  )
   async findByPatient(@Param('id') id: string) {
     return this.encountersService.findByPatient(id);
   }

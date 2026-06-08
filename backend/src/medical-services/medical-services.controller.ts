@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { MedicalServicesService } from './medical-services.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
@@ -7,7 +16,9 @@ import { UserRole } from '@prisma/client';
 @Controller('medical-services')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MedicalServicesController {
-  constructor(private readonly medicalServicesService: MedicalServicesService) {}
+  constructor(
+    private readonly medicalServicesService: MedicalServicesService,
+  ) {}
 
   @Get()
   findAll() {

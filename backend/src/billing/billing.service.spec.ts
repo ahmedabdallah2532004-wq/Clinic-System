@@ -41,13 +41,19 @@ describe('BillingService', () => {
 
   describe('addPayment', () => {
     it('should throw ConflictException if payment amount is zero or negative', async () => {
-      await expect(service.addPayment('inv-1', 0, 'CARD')).rejects.toThrow(ConflictException);
-      await expect(service.addPayment('inv-1', -10, 'CARD')).rejects.toThrow(ConflictException);
+      await expect(service.addPayment('inv-1', 0, 'CARD')).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.addPayment('inv-1', -10, 'CARD')).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw NotFoundException if invoice is not found', async () => {
       mockPrisma.invoice.findUnique.mockResolvedValue(null);
-      await expect(service.addPayment('inv-1', 100, 'CARD')).rejects.toThrow(NotFoundException);
+      await expect(service.addPayment('inv-1', 100, 'CARD')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should successfully add a payment and update status if fully paid', async () => {
@@ -72,12 +78,19 @@ describe('BillingService', () => {
 
   describe('addBulkPayments', () => {
     it('should throw ConflictException if invoice ID list is empty', async () => {
-      await expect(service.addBulkPayments({ invoiceIds: [], method: 'CARD' })).rejects.toThrow(ConflictException);
+      await expect(
+        service.addBulkPayments({ invoiceIds: [], method: 'CARD' }),
+      ).rejects.toThrow(ConflictException);
     });
 
     it('should throw NotFoundException if any of the bulk invoices is missing', async () => {
       mockPrisma.invoice.findUnique.mockResolvedValue(null);
-      await expect(service.addBulkPayments({ invoiceIds: ['missing-inv'], method: 'CARD' })).rejects.toThrow(NotFoundException);
+      await expect(
+        service.addBulkPayments({
+          invoiceIds: ['missing-inv'],
+          method: 'CARD',
+        }),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should process bulk payments successfully, skipping already paid invoices', async () => {
@@ -98,7 +111,10 @@ describe('BillingService', () => {
         .mockResolvedValueOnce(invoicePending)
         .mockResolvedValueOnce(invoiceAlreadyPaid);
 
-      mockPrisma.payment.create.mockResolvedValue({ id: 'pay-bulk-1', amount: 150 });
+      mockPrisma.payment.create.mockResolvedValue({
+        id: 'pay-bulk-1',
+        amount: 150,
+      });
 
       const result = await service.addBulkPayments({
         invoiceIds: ['inv-pending', 'inv-paid'],
@@ -111,4 +127,3 @@ describe('BillingService', () => {
     });
   });
 });
-

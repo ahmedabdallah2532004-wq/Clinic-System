@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaymentStatus } from '@prisma/client';
 
@@ -6,12 +10,12 @@ import { PaymentStatus } from '@prisma/client';
 export class BillingService {
   constructor(private prisma: PrismaService) {}
 
-  async createInvoice(data: { 
-    encounterId?: string; 
-    patientId: string; 
-    dueDate: Date; 
+  async createInvoice(data: {
+    encounterId?: string;
+    patientId: string;
+    dueDate: Date;
     totalAmount: number;
-    items?: { serviceId: number; quantity: number; unitPrice: number }[]
+    items?: { serviceId: number; quantity: number; unitPrice: number }[];
   }) {
     return this.prisma.invoice.create({
       data: {
@@ -20,22 +24,25 @@ export class BillingService {
         dueDate: new Date(data.dueDate),
         totalAmount: data.totalAmount,
         status: PaymentStatus.PENDING,
-        items: data.items && data.items.length > 0 ? {
-          create: data.items.map(item => ({
-            serviceId: Number(item.serviceId),
-            quantity: Number(item.quantity),
-            unitPrice: Number(item.unitPrice),
-          }))
-        } : undefined
+        items:
+          data.items && data.items.length > 0
+            ? {
+                create: data.items.map((item) => ({
+                  serviceId: Number(item.serviceId),
+                  quantity: Number(item.quantity),
+                  unitPrice: Number(item.unitPrice),
+                })),
+              }
+            : undefined,
       },
       include: {
         patient: true,
         items: {
           include: {
-            service: true
-          }
-        }
-      }
+            service: true,
+          },
+        },
+      },
     });
   }
 
@@ -46,7 +53,7 @@ export class BillingService {
 
     const invoice = await this.prisma.invoice.findUnique({
       where: { id: invoiceId },
-      include: { payments: true }
+      include: { payments: true },
     });
 
     if (!invoice) throw new NotFoundException('Invoice not found');
@@ -60,7 +67,9 @@ export class BillingService {
     });
 
     // Sum all payments for this invoice
-    const totalPaid = (invoice.payments || []).reduce((sum, p) => sum + Number(p.amount), 0) + amount;
+    const totalPaid =
+      (invoice.payments || []).reduce((sum, p) => sum + Number(p.amount), 0) +
+      amount;
 
     if (totalPaid >= Number(invoice.totalAmount)) {
       await this.prisma.invoice.update({
@@ -83,7 +92,7 @@ export class BillingService {
       for (const invoiceId of data.invoiceIds) {
         const invoice = await tx.invoice.findUnique({
           where: { id: invoiceId },
-          include: { payments: true }
+          include: { payments: true },
         });
 
         if (!invoice) {
@@ -94,7 +103,12 @@ export class BillingService {
           continue;
         }
 
-        const remainingAmount = Number(invoice.totalAmount) - (invoice.payments || []).reduce((sum, p) => sum + Number(p.amount), 0);
+        const remainingAmount =
+          Number(invoice.totalAmount) -
+          (invoice.payments || []).reduce(
+            (sum, p) => sum + Number(p.amount),
+            0,
+          );
         if (remainingAmount <= 0) {
           continue;
         }
@@ -158,12 +172,12 @@ export class BillingService {
 
   async getCsvReport() {
     const invoices = await this.getInvoices();
-    
+
     // CSV Header
     let csv = '\ufeff'; // UTF-8 BOM for Excel Arabic support
     csv += 'رقم الفاتورة,المريض,التاريخ,المبلغ الإجمالي,الحالة\n';
 
-    invoices.forEach(inv => {
+    invoices.forEach((inv) => {
       csv += `${inv.id},${inv.patient.fullName},${inv.createdAt.toISOString().split('T')[0]},${inv.totalAmount},${inv.status}\n`;
     });
 

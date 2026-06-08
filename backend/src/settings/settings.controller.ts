@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Res, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Res,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SettingsService } from './settings.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -31,15 +41,18 @@ export class SettingsController {
   @Post('logo')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, `clinic-logo-${uniqueSuffix}${extname(file.originalname)}`);
-      },
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `clinic-logo-${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
     }),
-  }))
+  )
   async uploadLogo(@UploadedFile() file: Express.Multer.File) {
     const logoUrl = `${process.env.API_URL || 'http://localhost:3001'}/settings/logo/${file.filename}`;
     await this.settingsService.updateSettings({ clinicLogo: logoUrl });

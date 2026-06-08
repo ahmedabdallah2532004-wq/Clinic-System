@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Appointment, AppointmentStatus } from '@prisma/client';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -24,21 +28,27 @@ export class AppointmentsService {
     const overlapping = await this.prisma.appointment.findFirst({
       where: {
         doctorId: dto.doctorId,
-        status: { notIn: [AppointmentStatus.CANCELLED, AppointmentStatus.NOSHOW] },
+        status: {
+          notIn: [AppointmentStatus.CANCELLED, AppointmentStatus.NOSHOW],
+        },
         startTime: { lt: end },
         endTime: { gt: start },
       },
     });
 
     if (overlapping) {
-      throw new ConflictException('هذا الطبيب لديه موعد آخر في نفس الفترة المحددة.');
+      throw new ConflictException(
+        'هذا الطبيب لديه موعد آخر في نفس الفترة المحددة.',
+      );
     }
 
     // 2. Check for double booking (Patient)
     const patientOverlapping = await this.prisma.appointment.findFirst({
       where: {
         patientId: dto.patientId,
-        status: { notIn: [AppointmentStatus.CANCELLED, AppointmentStatus.NOSHOW] },
+        status: {
+          notIn: [AppointmentStatus.CANCELLED, AppointmentStatus.NOSHOW],
+        },
         startTime: { lt: end },
         endTime: { gt: start },
       },
@@ -73,11 +83,8 @@ export class AppointmentsService {
   async findByDoctor(doctorId: string) {
     const doctor = await this.prisma.doctor.findFirst({
       where: {
-        OR: [
-          { id: doctorId },
-          { userId: doctorId }
-        ]
-      }
+        OR: [{ id: doctorId }, { userId: doctorId }],
+      },
     });
     const actualDoctorId = doctor ? doctor.id : doctorId;
 
@@ -113,7 +120,9 @@ export class AppointmentsService {
     const now = new Date();
 
     if (start < now) {
-      throw new ConflictException('عذراً، لا يمكن إعادة جدولة الموعد في الماضي.');
+      throw new ConflictException(
+        'عذراً، لا يمكن إعادة جدولة الموعد في الماضي.',
+      );
     }
 
     if (start >= end) {
@@ -135,7 +144,9 @@ export class AppointmentsService {
     });
 
     if (overlapping) {
-      throw new ConflictException('هذا الطبيب لديه موعد آخر متداخل في هذا الوقت.');
+      throw new ConflictException(
+        'هذا الطبيب لديه موعد آخر متداخل في هذا الوقت.',
+      );
     }
 
     return this.prisma.appointment.update({
@@ -147,19 +158,21 @@ export class AppointmentsService {
     });
   }
 
-  async blockTime(body: { doctorId: string; startTime: string; endTime: string; reason?: string }) {
+  async blockTime(body: {
+    doctorId: string;
+    startTime: string;
+    endTime: string;
+    reason?: string;
+  }) {
     const doctor = await this.prisma.doctor.findFirst({
       where: {
-        OR: [
-          { id: body.doctorId },
-          { userId: body.doctorId }
-        ]
-      }
+        OR: [{ id: body.doctorId }, { userId: body.doctorId }],
+      },
     });
     const actualDoctorId = doctor ? doctor.id : body.doctorId;
 
     let blockedPatient = await this.prisma.patient.findFirst({
-      where: { fullName: 'Blocked Time' }
+      where: { fullName: 'Blocked Time' },
     });
 
     if (!blockedPatient) {
@@ -169,7 +182,7 @@ export class AppointmentsService {
           dateOfBirth: new Date('1970-01-01'),
           gender: 'OTHER',
           contactNumber: '0000000000',
-        }
+        },
       });
     }
 
@@ -181,7 +194,7 @@ export class AppointmentsService {
         endTime: new Date(body.endTime),
         notes: body.reason || 'Blocked Time Slot',
         status: 'SCHEDULED',
-      }
+      },
     });
   }
 }

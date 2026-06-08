@@ -9,8 +9,8 @@ export class PdfService {
   async generateInvoice(invoiceData: any): Promise<Buffer> {
     const settings = (await this.prisma.clinicSetting.findFirst()) as any;
     const vatRate = settings?.vatPercentage || 15;
-    
-    const subtotal = Number(invoiceData.totalAmount) / (1 + vatRate/100);
+
+    const subtotal = Number(invoiceData.totalAmount) / (1 + vatRate / 100);
     const vatAmount = Number(invoiceData.totalAmount) - subtotal;
 
     return new Promise((resolve) => {
@@ -21,7 +21,11 @@ export class PdfService {
       doc.on('end', () => resolve(Buffer.concat(chunks)));
 
       // Header
-      doc.fontSize(20).text(settings?.clinicName || 'Clinic Management System', { align: 'center' });
+      doc
+        .fontSize(20)
+        .text(settings?.clinicName || 'Clinic Management System', {
+          align: 'center',
+        });
       doc.fontSize(10).text(settings?.clinicAddress || '', { align: 'center' });
       doc.moveDown();
 
@@ -54,9 +58,21 @@ export class PdfService {
       doc.moveDown();
       doc.text(`Subtotal: ${subtotal.toFixed(2)}`, 350, doc.y);
       doc.text(`VAT (${vatRate}%): ${vatAmount.toFixed(2)}`, 350, doc.y + 15);
-      doc.font('Helvetica-Bold').fontSize(14).text(`Total: ${Number(invoiceData.totalAmount).toFixed(2)} SAR`, 350, doc.y + 35);
+      doc
+        .font('Helvetica-Bold')
+        .fontSize(14)
+        .text(
+          `Total: ${Number(invoiceData.totalAmount).toFixed(2)} SAR`,
+          350,
+          doc.y + 35,
+        );
 
-      doc.font('Helvetica').fontSize(10).text('Thank you for choosing our clinic.', 50, 700, { align: 'center' });
+      doc
+        .font('Helvetica')
+        .fontSize(10)
+        .text('Thank you for choosing our clinic.', 50, 700, {
+          align: 'center',
+        });
 
       doc.end();
     });
