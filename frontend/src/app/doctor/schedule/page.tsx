@@ -10,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/hooks/useToast';
 
@@ -44,7 +45,7 @@ export default function DoctorSchedule() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctor-schedule'] });
-      addToast('Time slot blocked successfully!', 'success');
+      addToast('تم حظر الفترة الزمنية بنجاح!', 'success');
       setIsBlockOpen(false);
       setBlockDate('');
       setBlockStartTime('');
@@ -53,7 +54,7 @@ export default function DoctorSchedule() {
       refetch();
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to block time slot.', 'error');
+      addToast(error.response?.data?.message || 'فشل حظر الفترة الزمنية.', 'error');
     }
   });
 
@@ -64,20 +65,20 @@ export default function DoctorSchedule() {
     const endDateTime = new Date(`${blockDate}T${blockEndTime}:00`);
 
     if (startDateTime >= endDateTime) {
-      addToast('End time must be after start time.', 'error');
+      addToast('يجب أن يكون وقت الانتهاء بعد وقت البدء.', 'error');
       return;
     }
 
     blockMutation.mutate({
       startTime: startDateTime.toISOString(),
       endTime: endDateTime.toISOString(),
-      reason: blockReason || 'Blocked Time'
+      reason: blockReason || 'فترة محظورة'
     });
   };
 
   const calendarEvents = appointments?.map((appt: any) => ({
     id: appt.id,
-    title: `${appt.patient?.fullName} - ${appt.notes || 'Checkup'}`,
+    title: `${appt.patient?.fullName} - ${appt.notes || 'كشف طبي'}`,
     start: appt.startTime,
     end: appt.endTime,
     backgroundColor: appt.status === 'COMPLETED' ? '#10b981' : appt.status === 'IN_PROGRESS' ? '#0066FF' : '#f59e0b',
@@ -89,19 +90,19 @@ export default function DoctorSchedule() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 text-right" dir="rtl">
         <div>
-          <h1 className="text-3xl font-black tracking-tight">Clinical Calendar</h1>
-          <p className="text-muted-foreground mt-1 font-medium">Manage your personal availability and review upcoming slots.</p>
+          <h1 className="text-3xl font-black tracking-tight">الجدول الزمني السريري</h1>
+          <p className="text-muted-foreground mt-1 font-medium">إدارة فترات توفرك ومراجعة الحجوزات والمواعيد القادمة.</p>
         </div>
         <div className="flex gap-3">
           <Button variant="premium" className="font-black uppercase tracking-widest text-xs h-12 px-6 shadow-xl shadow-primary/20" onClick={() => setIsBlockOpen(true)}>
-             <Plus className="w-4 h-4 mr-2" /> Block Time
+             <Plus className="w-4 h-4 ml-2" /> حظر فترة زمنية
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 text-right" dir="rtl">
         <div className="xl:col-span-3">
            <Card className="p-4 bg-white dark:bg-zinc-900 border sub-border rounded-[2rem] shadow-sm">
               {isLoading ? (
@@ -115,32 +116,32 @@ export default function DoctorSchedule() {
         </div>
 
         <div className="space-y-6">
-           <Card className="premium-card p-6 bg-zinc-50 dark:bg-zinc-800/50 border sub-border rounded-[2rem]">
-              <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">Schedule Statistics</h3>
+           <Card className="premium-card p-6 bg-zinc-50 dark:bg-zinc-800/50 border sub-border rounded-[2rem] text-right">
+              <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground mb-6">إحصائيات المواعيد</h3>
               <div className="space-y-6">
                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold">Today's Load</span>
-                    <span className="px-3 py-1 bg-primary text-white rounded-full text-[10px] font-black">{appointments?.length || 0} Cases</span>
+                    <span className="text-xs font-bold">حالات اليوم</span>
+                    <span className="px-3 py-1 bg-primary text-white rounded-full text-[10px] font-black">{appointments?.length || 0} حالات</span>
                  </div>
                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold">Week Utilization</span>
+                    <span className="text-xs font-bold">نسبة استغلال الأسبوع</span>
                     <span className="text-lg font-black text-primary">82%</span>
                  </div>
                  <div className="pt-4 border-t sub-border">
                     <p className="text-[10px] font-bold text-muted-foreground leading-relaxed italic">
-                       "Your schedule is optimized based on average session times of 25 minutes per patient."
+                       "تم ضبط وتنسيق مواعيد جدولك الزمني بناءً على متوسط ٢٥ دقيقة لكل جلسة مريض."
                     </p>
                  </div>
               </div>
            </Card>
 
-           <div className="p-8 bg-primary rounded-[2rem] text-white shadow-2xl shadow-primary/20">
+           <div className="p-8 bg-primary rounded-[2rem] text-white shadow-2xl shadow-primary/20 text-right">
               <h4 className="font-black text-lg mb-4 flex items-center gap-2">
                  <Clock size={20} />
-                 Shift Notice
+                 ملاحظة المناوبات
               </h4>
               <p className="text-xs text-primary-foreground/80 leading-relaxed font-medium">
-                 Next week includes a public holiday on Thursday. All non-emergency appointments have been rescheduled.
+                 الأسبوع القادم يتضمن إجازة رسمية يوم الخميس. تم إعادة جدولة المواعيد غير الطارئة تلقائياً.
               </p>
            </div>
         </div>
@@ -148,14 +149,14 @@ export default function DoctorSchedule() {
 
       {/* Block Time Modal */}
       {isBlockOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-md animate-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-md animate-in text-right" dir="rtl">
           <div className="bg-white dark:bg-zinc-900 rounded-3xl w-full max-w-md p-8 shadow-2xl border sub-border">
-            <h3 className="text-2xl font-bold tracking-tight mb-2">Block Time Slot</h3>
-            <p className="text-sm text-muted-foreground mb-8">Select a date and time range to block from appointments.</p>
+            <h3 className="text-2xl font-bold tracking-tight mb-2">حظر فترة زمنية</h3>
+            <p className="text-sm text-muted-foreground mb-8">اختر التاريخ والمدد الزمنية لحظر حجز المواعيد فيها.</p>
             
             <form onSubmit={handleBlockSubmit} className="space-y-4">
               <Input 
-                label="Date" 
+                label="التاريخ" 
                 type="date" 
                 value={blockDate}
                 onChange={(e) => setBlockDate(e.target.value)}
@@ -163,14 +164,14 @@ export default function DoctorSchedule() {
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input 
-                  label="Start Time" 
+                  label="وقت البدء" 
                   type="time" 
                   value={blockStartTime}
                   onChange={(e) => setBlockStartTime(e.target.value)}
                   required
                 />
                 <Input 
-                  label="End Time" 
+                  label="وقت الانتهاء" 
                   type="time" 
                   value={blockEndTime}
                   onChange={(e) => setBlockEndTime(e.target.value)}
@@ -178,8 +179,8 @@ export default function DoctorSchedule() {
                 />
               </div>
               <Input 
-                label="Reason / Notes" 
-                placeholder="e.g. Lunch Break, Seminar"
+                label="السبب / ملاحظات" 
+                placeholder="مثال: استراحة غداء، مؤتمر علمي"
                 value={blockReason}
                 onChange={(e) => setBlockReason(e.target.value)}
               />
@@ -191,14 +192,14 @@ export default function DoctorSchedule() {
                   className="flex-1 font-bold"
                   onClick={() => setIsBlockOpen(false)}
                 >
-                  Cancel
+                  إلغاء
                 </Button>
                 <Button 
                   type="submit"
                   className="flex-1 font-bold shadow-lg shadow-primary/20"
                   isLoading={blockMutation.isPending}
                 >
-                  Block Slot
+                  تأكيد الحظر
                 </Button>
               </div>
             </form>

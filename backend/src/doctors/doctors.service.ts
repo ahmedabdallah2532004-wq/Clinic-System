@@ -88,17 +88,17 @@ export class DoctorsService {
   }) {
     const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
     if (existingUser) {
-      throw new ConflictException('A user with this email already exists');
+      throw new ConflictException('هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.');
     }
 
     const existingDoc = await this.prisma.doctor.findUnique({ where: { licenseNumber: data.licenseNumber } });
     if (existingDoc) {
-      throw new ConflictException('A doctor with this license number already exists');
+      throw new ConflictException('رقم ترخيص الطبيب هذا مسجل بالفعل لطبيب آخر.');
     }
 
     const password = data.password || 'doctor123';
     if (password.length < 6) {
-      throw new ConflictException('Password must be at least 6 characters long');
+      throw new ConflictException('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

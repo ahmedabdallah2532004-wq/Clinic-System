@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
@@ -108,7 +109,7 @@ export default function PatientDashboard() {
     if (cleanNum.startsWith('4')) return 'Visa';
     if (cleanNum.startsWith('5')) return 'Mastercard';
     if (cleanNum.startsWith('3')) return 'American Express';
-    return 'Credit Card';
+    return 'بطاقة ائتمانية';
   };
 
   const formattedCardDisplay = () => {
@@ -131,7 +132,7 @@ export default function PatientDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-invoices', patientId] });
-      addToast('All outstanding balances have been paid successfully!', 'success');
+      addToast('تم سداد جميع المبالغ المستحقة بنجاح!', 'success');
       setIsPaymentModalOpen(false);
       setCardNumber('');
       setCardHolder('');
@@ -139,14 +140,14 @@ export default function PatientDashboard() {
       setCardCvv('');
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Payment processing failed. Please try again.', 'error');
+      addToast(error.response?.data?.message || 'فشلت عملية الدفع. يرجى المحاولة مرة أخرى.', 'error');
     }
   });
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!cardNumber || !cardHolder || !cardExpiry || !cardCvv) {
-      addToast('Please fill in all credit card fields.', 'error');
+      addToast('يرجى ملء جميع حقول البطاقة الائتمانية.', 'error');
       return;
     }
     settleBalanceMutation.mutate();
@@ -168,11 +169,11 @@ export default function PatientDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['patient-appointments', patientId] });
-      addToast('Your appointment has been successfully rescheduled!', 'success');
+      addToast('تمت إعادة جدولة موعدك بنجاح!', 'success');
       setIsRescheduleModalOpen(false);
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to reschedule. Please try a different slot.', 'error');
+      addToast(error.response?.data?.message || 'فشلت إعادة الجدولة. يرجى اختيار موعد آخر.', 'error');
     }
   });
 
@@ -184,7 +185,6 @@ export default function PatientDashboard() {
     const originalEnd = new Date(nextAppointment.endTime);
     const durationMs = originalEnd.getTime() - originalStart.getTime();
 
-    // Parse date parts manually to avoid browser-dependent local/UTC parsing differences
     const [year, month, day] = rescheduleDate.split('-').map(Number);
     const [hours, minutes] = rescheduleTime.split(':').map(Number);
     const newStart = new Date(year, month - 1, day, hours, minutes, 0);
@@ -206,44 +206,44 @@ export default function PatientDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8" dir="rtl">
         {/* Left Column: History & Meds */}
         <div className="lg:col-span-2 space-y-8">
-          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm">
-            <h3 className="text-xl font-black tracking-tight text-slate-800 mb-8 flex items-center gap-3">
+          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm text-right">
+            <h3 className="text-xl font-black tracking-tight text-slate-800 mb-8 flex items-center gap-3 justify-start">
               <History className="text-primary" size={24} />
-              Clinical Timeline
+              السجل الزمني الطبي
             </h3>
             
             {pastRecords.length === 0 ? (
               <div className="py-12 text-center bg-accent/20 rounded-2xl border border-dashed border-accent">
-                 <p className="text-sm font-bold text-muted-foreground">No past clinical records found.</p>
+                 <p className="text-sm font-bold text-muted-foreground">لا توجد سجلات طبية سابقة حالياً.</p>
               </div>
             ) : (
               <div className="space-y-8">
                 {pastRecords.map((record: any, i: number) => (
                   <div key={record.id} className="flex gap-6 relative group">
-                    {i !== pastRecords.length - 1 && <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-zinc-100 dark:bg-zinc-800"></div>}
+                    {i !== pastRecords.length - 1 && <div className="absolute right-5 top-10 bottom-0 w-0.5 bg-zinc-100 dark:bg-zinc-800"></div>}
                     <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-primary z-10 border-4 border-white dark:border-zinc-900 group-hover:bg-primary/10 transition-colors">
                       <FileText size={18} />
                     </div>
-                    <div className="flex-1 pb-8">
+                    <div className="flex-1 pb-8 pr-2 text-right">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h4 className="font-bold text-slate-800 text-lg">{record.chiefComplaint || 'Routine Checkup'}</h4>
+                          <h4 className="font-bold text-slate-800 text-lg">{record.chiefComplaint || 'استشارة عامة'}</h4>
                           <p className="text-xs font-black text-primary uppercase tracking-widest mt-0.5">
-                            {format(new Date(record.createdAt), 'MMM dd, yyyy')} • {record.doctor?.fullName}
+                            {format(new Date(record.createdAt), 'dd MMMM yyyy', { locale: ar })} • د. {record.doctor?.fullName}
                           </p>
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed italic line-clamp-2">
-                        {record.treatmentPlan || 'General consultation and evaluation.'}
+                        {record.treatmentPlan || 'استشارة طبية وتقييم الحالة العامة.'}
                       </p>
                       <button 
-                        onClick={() => addToast('Report downloading...', 'info')}
+                        onClick={() => addToast('جاري تحميل التقرير الطبي...', 'info')}
                         className="mt-4 text-[10px] flex items-center gap-2 text-muted-foreground hover:text-primary font-black uppercase tracking-widest transition-colors"
                       >
-                        <Download size={14} /> Full Medical Report
+                        <Download size={14} /> التقرير الطبي الكامل
                       </button>
                     </div>
                   </div>
@@ -252,28 +252,28 @@ export default function PatientDashboard() {
             )}
           </section>
 
-          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm">
-            <h3 className="text-xl font-black tracking-tight text-slate-800 mb-8 flex items-center gap-3">
+          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm text-right">
+            <h3 className="text-xl font-black tracking-tight text-slate-800 mb-8 flex items-center gap-3 justify-start">
               <FileText className="text-emerald-600" size={24} />
-              Active Prescriptions
+              الوصفات الطبية النشطة
             </h3>
             
             {activePrescriptions.length === 0 ? (
                <div className="py-12 text-center bg-emerald-50/50 rounded-2xl border border-dashed border-emerald-100">
-                  <p className="text-sm font-bold text-emerald-600/60">No active medications prescribed.</p>
+                  <p className="text-sm font-bold text-emerald-600/60">لا توجد أدوية موصوفة حالياً.</p>
                </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {activePrescriptions.map((presc: any) => (
-                  <div key={presc.id} className="p-6 bg-emerald-50/30 rounded-[1.5rem] border border-emerald-100 hover:shadow-md transition-shadow">
+                  <div key={presc.id} className="p-6 bg-emerald-50/30 rounded-[1.5rem] border border-emerald-100 hover:shadow-md transition-shadow text-right">
                     {presc.items.map((item: any, idx: number) => (
                       <div key={idx} className="mb-4 last:mb-0">
                         <div className="flex justify-between items-start mb-2">
                           <p className="font-black text-slate-800">{item.medicationName}</p>
-                          <span className="text-[9px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-black">ACTIVE</span>
+                          <span className="text-[9px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-black">نشط</span>
                         </div>
                         <p className="text-xs font-bold text-emerald-700">{item.dosage} • {item.frequency}</p>
-                        <p className="text-[10px] text-emerald-600/70 mt-2 font-black uppercase tracking-tighter italic">Ends: {item.duration}</p>
+                        <p className="text-[10px] text-emerald-600/70 mt-2 font-black uppercase tracking-tighter italic">المدة: {item.duration}</p>
                       </div>
                     ))}
                   </div>
@@ -285,14 +285,14 @@ export default function PatientDashboard() {
 
         {/* Right Column: Appointments & Billing */}
         <div className="space-y-8">
-          <section className="bg-primary p-8 text-white border-none rounded-[2rem] shadow-2xl shadow-primary/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 -mr-8 -mt-8 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+          <section className="bg-primary p-8 text-white border-none rounded-[2rem] shadow-2xl shadow-primary/20 relative overflow-hidden group text-right">
+            <div className="absolute top-0 left-0 p-8 opacity-10 -ml-8 -mt-8 rotate-12 group-hover:rotate-0 transition-transform duration-500">
                <Calendar size={120} />
             </div>
             
-            <h3 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10">
+            <h3 className="text-lg font-black uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10 justify-start">
               <Clock size={20} />
-              Next Session
+              الجلسة القادمة
             </h3>
             
             {nextAppointment ? (
@@ -300,56 +300,56 @@ export default function PatientDashboard() {
                 <div className="mb-8">
                   <p className="text-5xl font-black tracking-tighter">{format(new Date(nextAppointment.startTime), 'dd')}</p>
                   <p className="text-primary-foreground/80 font-black uppercase tracking-widest text-xs mt-1">
-                    {format(new Date(nextAppointment.startTime), 'EEEE, hh:mm aa')}
+                    {format(new Date(nextAppointment.startTime), 'EEEE, hh:mm aa', { locale: ar })}
                   </p>
                 </div>
                 <div className="p-4 bg-white/10 rounded-2xl mb-8 backdrop-blur-md border border-white/10">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-primary-foreground/60 mb-1">Assigned Specialist</p>
-                  <p className="font-bold text-lg">{nextAppointment.doctor?.fullName}</p>
-                  <p className="text-xs text-primary-foreground/70">{nextAppointment.doctor?.licenseNumber}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary-foreground/60 mb-1">الطبيب المعالج</p>
+                  <p className="font-bold text-lg">د. {nextAppointment.doctor?.fullName}</p>
+                  <p className="text-xs text-primary-foreground/70">{nextAppointment.doctor?.licenseNumber || 'مرخص'}</p>
                 </div>
                 <Button 
                   variant="premium" 
                   className="w-full h-14 bg-white text-primary hover:bg-zinc-100 rounded-[1rem] font-black uppercase tracking-widest shadow-xl"
                   onClick={openRescheduleModal}
                 >
-                  Modify Booking
+                  تعديل الحجز
                 </Button>
               </div>
             ) : (
               <div className="relative z-10 py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/20">
-                 <p className="text-sm font-bold text-white/60 mb-4">No upcoming appointments</p>
+                 <p className="text-sm font-bold text-white/60 mb-4">لا توجد مواعيد قادمة</p>
                  <Button 
                    variant="premium" 
                    size="sm" 
                    className="bg-white text-primary font-black uppercase tracking-widest text-[10px]"
                    onClick={() => router.push('/patient/book')}
                  >
-                    Book Now
+                    حجز الآن
                  </Button>
               </div>
             )}
           </section>
 
-          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm">
-            <h3 className="text-lg font-black uppercase tracking-widest text-slate-800 mb-6 flex items-center gap-2">
+          <section className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border sub-border shadow-sm text-right">
+            <h3 className="text-lg font-black uppercase tracking-widest text-slate-800 mb-6 flex items-center gap-2 justify-start">
               <CreditCard className="text-primary" size={20} />
-              Financial Balance
+              الرصيد المالي
             </h3>
             
             {unpaidBills.length === 0 ? (
                <div className="py-8 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Balance Cleared</p>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">تمت تسوية الحساب بالكامل</p>
                </div>
             ) : (
               <div className="space-y-4 mb-8">
                 {unpaidBills.map((inv: any) => (
                   <div key={inv.id} className="flex justify-between items-center p-5 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border sub-border">
-                    <div>
-                      <p className="text-sm font-black text-slate-800">Clinical Fees</p>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter mt-0.5">Due: {format(new Date(inv.dueDate), 'MMM dd')}</p>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-slate-800">الرسوم الطبية</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter mt-0.5">تاريخ الاستحقاق: {format(new Date(inv.dueDate), 'dd MMMM', { locale: ar })}</p>
                     </div>
-                    <span className="font-black text-lg text-slate-800">${parseFloat(inv.totalAmount).toFixed(2)}</span>
+                    <span className="font-black text-lg text-slate-800">{parseFloat(inv.totalAmount).toLocaleString()} ج.م</span>
                   </div>
                 ))}
               </div>
@@ -360,7 +360,7 @@ export default function PatientDashboard() {
                 className="w-full h-14 rounded-[1rem] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
                 onClick={() => setIsPaymentModalOpen(true)}
               >
-                Settle Outstanding
+                تسوية المبالغ المستحقة
               </Button>
             )}
           </section>
@@ -369,10 +369,10 @@ export default function PatientDashboard() {
 
       {/* Settle Balance / Card Checkout Modal */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-900 border sub-border rounded-[2rem] p-8 shadow-2xl">
+        <DialogContent className="max-w-md bg-white dark:bg-zinc-900 border sub-border rounded-[2rem] p-8 shadow-2xl text-right" dir="rtl">
           <div className="mb-6">
-            <h3 className="text-2xl font-black tracking-tight text-slate-800">Checkout Gateway</h3>
-            <p className="text-sm text-muted-foreground mt-1">Settle your outstanding balance via our secure clinical checkout.</p>
+            <h3 className="text-2xl font-black tracking-tight text-slate-800">بوابة الدفع الإلكتروني</h3>
+            <p className="text-sm text-muted-foreground mt-1">قم بتسوية المستحقات المتبقية عبر بوابة الدفع الآمنة الخاصة بنا.</p>
           </div>
 
           {/* Visual Credit Card Preview */}
@@ -386,18 +386,18 @@ export default function PatientDashboard() {
                 {getCardType(cardNumber)}
               </span>
             </div>
-            <div className="my-2 text-xl font-mono tracking-widest text-center">
+            <div className="my-2 text-xl font-mono tracking-widest text-center" dir="ltr">
               {formattedCardDisplay()}
             </div>
             <div className="flex justify-between items-end">
-              <div>
-                <p className="text-[8px] font-black uppercase tracking-widest text-white/40">Card Holder</p>
+              <div className="text-right">
+                <p className="text-[8px] font-black uppercase tracking-widest text-white/40">حامل البطاقة</p>
                 <p className="text-sm font-bold uppercase truncate max-w-[200px]">
-                  {cardHolder || 'CARDHOLDER NAME'}
+                  {cardHolder || 'اسم حامل البطاقة'}
                 </p>
               </div>
-              <div className="text-right">
-                <p className="text-[8px] font-black uppercase tracking-widest text-white/40">Expires</p>
+              <div className="text-left">
+                <p className="text-[8px] font-black uppercase tracking-widest text-white/40">تاريخ الانتهاء</p>
                 <p className="text-sm font-mono font-bold">
                   {cardExpiry || 'MM/YY'}
                 </p>
@@ -407,22 +407,22 @@ export default function PatientDashboard() {
 
           <form onSubmit={handlePaymentSubmit} className="space-y-4">
             <div className="bg-zinc-50 dark:bg-zinc-800/40 p-4 rounded-xl border sub-border flex justify-between items-center mb-4">
-              <span className="text-sm font-bold text-slate-800">Total Outstanding</span>
+              <span className="text-sm font-bold text-slate-800">الإجمالي المستحق</span>
               <span className="text-xl font-black text-primary">
-                ${unpaidBills.reduce((acc: number, inv: any) => acc + parseFloat(inv.totalAmount), 0).toFixed(2)}
+                {unpaidBills.reduce((acc: number, inv: any) => acc + parseFloat(inv.totalAmount), 0).toLocaleString()} ج.م
               </span>
             </div>
 
             <Input 
-              label="Cardholder Name" 
-              placeholder="e.g. John Doe"
+              label="اسم حامل البطاقة" 
+              placeholder="مثال: أحمد عبد الله"
               value={cardHolder}
               onChange={(e) => setCardHolder(e.target.value)}
               required
             />
             
             <Input 
-              label="Card Number" 
+              label="رقم البطاقة" 
               placeholder="0000 0000 0000 0000"
               value={cardNumber}
               onChange={handleCardNumberChange}
@@ -432,7 +432,7 @@ export default function PatientDashboard() {
 
             <div className="grid grid-cols-2 gap-4">
               <Input 
-                label="Expiry Date" 
+                label="تاريخ الانتهاء" 
                 placeholder="MM/YY"
                 value={cardExpiry}
                 onChange={handleExpiryChange}
@@ -440,7 +440,7 @@ export default function PatientDashboard() {
                 required
               />
               <Input 
-                label="CVV" 
+                label="رمز الأمان (CVV)" 
                 placeholder="000"
                 type="password"
                 value={cardCvv}
@@ -457,14 +457,14 @@ export default function PatientDashboard() {
                 className="flex-1 font-bold"
                 onClick={() => setIsPaymentModalOpen(false)}
               >
-                Cancel
+                إلغاء
               </Button>
               <Button 
                 type="submit" 
                 className="flex-1 font-bold shadow-lg shadow-primary/20"
                 isLoading={settleBalanceMutation.isPending}
               >
-                Pay Balance
+                تأكيد الدفع
               </Button>
             </div>
           </form>
@@ -473,15 +473,15 @@ export default function PatientDashboard() {
 
       {/* Reschedule Session Modal */}
       <Dialog open={isRescheduleModalOpen} onOpenChange={setIsRescheduleModalOpen}>
-        <DialogContent className="max-w-md bg-white dark:bg-zinc-900 border sub-border rounded-[2rem] p-8 shadow-2xl">
+        <DialogContent className="max-w-md bg-white dark:bg-zinc-900 border sub-border rounded-[2rem] p-8 shadow-2xl text-right" dir="rtl">
           <div className="mb-6">
-            <h3 className="text-2xl font-black tracking-tight text-slate-800">Reschedule Booking</h3>
-            <p className="text-sm text-muted-foreground mt-1 font-medium">Select a new date and start time for your clinical slot.</p>
+            <h3 className="text-2xl font-black tracking-tight text-slate-800">إعادة جدولة الحجز</h3>
+            <p className="text-sm text-muted-foreground mt-1 font-medium">اختر تاريخاً ووقت بدء جديد لموعدك الطبي.</p>
           </div>
 
           <form onSubmit={handleRescheduleSubmit} className="space-y-4">
             <Input 
-              label="Preferred Date" 
+              label="التاريخ المفضل" 
               type="date"
               value={rescheduleDate}
               onChange={(e) => setRescheduleDate(e.target.value)}
@@ -489,7 +489,7 @@ export default function PatientDashboard() {
             />
             
             <Input 
-              label="Start Time" 
+              label="وقت البدء" 
               type="time"
               value={rescheduleTime}
               onChange={(e) => setRescheduleTime(e.target.value)}
@@ -497,10 +497,10 @@ export default function PatientDashboard() {
             />
 
             {nextAppointment && (
-              <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 mt-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-1">Current Schedule</p>
+              <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 mt-4 text-right">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary/70 mb-1">الجدول الزمني الحالي</p>
                 <p className="text-xs font-bold text-slate-800">
-                  {format(new Date(nextAppointment.startTime), 'EEEE, MMM dd, yyyy')} @ {format(new Date(nextAppointment.startTime), 'hh:mm aa')}
+                  {format(new Date(nextAppointment.startTime), 'EEEE, dd MMMM yyyy', { locale: ar })} @ {format(new Date(nextAppointment.startTime), 'hh:mm aa', { locale: ar })}
                 </p>
               </div>
             )}
@@ -512,14 +512,14 @@ export default function PatientDashboard() {
                 className="flex-1 font-bold"
                 onClick={() => setIsRescheduleModalOpen(false)}
               >
-                Cancel
+                إلغاء
               </Button>
               <Button 
                 type="submit" 
                 className="flex-1 font-bold shadow-lg shadow-primary/20"
                 isLoading={rescheduleMutation.isPending}
               >
-                Reschedule
+                إعادة جدولة
               </Button>
             </div>
           </form>

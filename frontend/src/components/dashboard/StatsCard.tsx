@@ -36,7 +36,7 @@ export const StatsCard = ({ title, value, icon: Icon, trend, className, index }:
             )}>
               {trend.isUp ? '+' : '-'}{trend.value}%
             </span>
-            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">vs last month</span>
+            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">مقارنة بالشهر الماضي</span>
           </div>
         )}
       </div>

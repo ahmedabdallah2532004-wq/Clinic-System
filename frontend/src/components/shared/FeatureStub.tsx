@@ -17,14 +17,14 @@ export const FeatureStub = ({ title, description }: { title: string; description
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-4">{title}</h1>
         <p className="text-muted-foreground leading-relaxed mb-10">
-          {description || "We are currently perfecting this feature to ensure the highest quality experience for your clinical workflow. Check back soon!"}
+          {description || "نحن نعمل حالياً على تطوير وتحسين هذه الميزة لضمان تقديم أعلى جودة ممكنة لسير العمل السريري الخاص بك. يرجى زيارة الصفحة لاحقاً!"}
         </p>
         <div className="flex gap-4">
           <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 w-4 h-4" /> Go Back
+            <ArrowLeft className="ml-2 w-4 h-4 rotate-180" /> العودة للخلف
           </Button>
           <Button onClick={() => router.push('/admin')}>
-            Return to Dashboard
+            العودة للوحة التحكم
           </Button>
         </div>
       </div>

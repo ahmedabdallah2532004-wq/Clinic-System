@@ -48,7 +48,7 @@ export function DataTable<T>({ data, columns, onRowClick, className }: DataTable
           ) : (
             <tr>
               <td colSpan={columns.length} className="px-6 py-20 text-center text-muted-foreground font-medium italic">
-                No records found.
+                لا توجد سجلات.
               </td>
             </tr>
           )}

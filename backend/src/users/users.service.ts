@@ -31,7 +31,7 @@ export class UsersService {
 
     const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
     if (existingUser) {
-       throw new ConflictException('A user with this email already exists');
+       throw new ConflictException('هذا البريد الإلكتروني مسجل بالفعل لمستخدم آخر.');
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);

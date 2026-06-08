@@ -35,14 +35,14 @@ export const PrescriptionCreator = ({ patientId, encounterId, onSave }: { patien
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-right" dir="rtl">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-bold tracking-tight">Prescription Builder</h3>
-          <p className="text-xs text-muted-foreground mt-1">Specify medications, dosages, and administration frequency.</p>
+        <div className="text-right">
+          <h3 className="text-xl font-bold tracking-tight">منشئ الوصفات الطبية</h3>
+          <p className="text-xs text-muted-foreground mt-1">حدد الأدوية والجرعات وتكرار الاستخدام ونظام العلاج للمريض.</p>
         </div>
         <Button variant="premium" size="sm" onClick={addItem} className="font-bold">
-          <Plus className="w-4 h-4 mr-2" /> Add Medication
+          <Plus className="w-4 h-4 ml-2" /> إضافة دواء
         </Button>
       </div>
 
@@ -56,38 +56,38 @@ export const PrescriptionCreator = ({ patientId, encounterId, onSave }: { patien
               exit={{ opacity: 0, height: 0 }}
               className="relative overflow-hidden"
             >
-              <Card className="p-6 bg-white dark:bg-zinc-900 border sub-border shadow-sm group hover:border-primary/30 transition-all">
+              <Card className="p-6 bg-white dark:bg-zinc-900 border sub-border shadow-sm group hover:border-primary/30 transition-all text-right">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="md:col-span-2">
                     <Input 
-                      label="Medication Name" 
-                      placeholder="e.g. Amoxicillin 500mg" 
+                      label="اسم الدواء" 
+                      placeholder="مثال: أموكسيسيلين ٥٠٠ ملغ" 
                       value={item.medicationName}
                       onChange={(e) => updateItem(index, 'medicationName', e.target.value)}
                     />
                   </div>
                   <div>
                     <Input 
-                      label="Dosage" 
-                      placeholder="e.g. 1 Tablet" 
+                      label="الجرعة" 
+                      placeholder="مثال: قرص واحد" 
                       value={item.dosage}
                       onChange={(e) => updateItem(index, 'dosage', e.target.value)}
                     />
                   </div>
-                  <div>
+                  <div className="relative">
                     <div className="flex items-center justify-between">
                        <Button 
                          variant="ghost" 
                          size="icon" 
-                         className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 rounded-full"
+                         className="absolute -top-2 -left-2 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:bg-destructive/10 rounded-full"
                          onClick={() => removeItem(index)}
                        >
                          <Trash2 className="w-4 h-4" />
                        </Button>
                     </div>
                     <Input 
-                      label="Frequency" 
-                      placeholder="e.g. 3x Daily" 
+                      label="التكرار" 
+                      placeholder="مثال: ٣ مرات يومياً" 
                       value={item.frequency}
                       onChange={(e) => updateItem(index, 'frequency', e.target.value)}
                     />
@@ -97,16 +97,16 @@ export const PrescriptionCreator = ({ patientId, encounterId, onSave }: { patien
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                    <div>
                       <Input 
-                        label="Duration" 
-                        placeholder="e.g. 7 Days" 
+                        label="المدة" 
+                        placeholder="مثال: ٧ أيام" 
                         value={item.duration}
                         onChange={(e) => updateItem(index, 'duration', e.target.value)}
                       />
                    </div>
                    <div className="md:col-span-3">
                       <Input 
-                        label="Special Instructions" 
-                        placeholder="e.g. Take after meals, avoid alcohol..." 
+                        label="تعليمات خاصة" 
+                        placeholder="مثال: يؤخذ بعد الأكل، تجنب منتجات الألبان..." 
                         value={item.instructions}
                         onChange={(e) => updateItem(index, 'instructions', e.target.value)}
                       />
@@ -118,19 +118,19 @@ export const PrescriptionCreator = ({ patientId, encounterId, onSave }: { patien
         </AnimatePresence>
       </div>
 
-      <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-start gap-3">
-         <Info className="w-5 h-5 text-primary mt-0.5" />
+      <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-start gap-3 text-right">
+         <Info className="w-5 h-5 text-primary mt-0.5 ml-2" />
          <p className="text-xs text-primary/80 font-medium leading-relaxed">
-           By submitting this prescription, it will be digitally signed by the attending specialist and recorded in the patient's medical history. A PDF copy will be generated for the patient.
+           باعتماد هذه الوصفة الطبية، سيتم توقيعها رقمياً بواسطة الطبيب المعالج وتسجيلها في التاريخ المرضي للمريض، كما سيتم إنشاء ملف PDF للوصفة لتسليمها للمريض.
          </p>
       </div>
 
       <div className="flex gap-3 justify-end pt-4 border-t sub-border">
          <Button variant="premium" className="font-bold px-8">
-            <Printer className="w-4 h-4 mr-2" /> Preview PDF
+            <Printer className="w-4 h-4 ml-2" /> معاينة PDF
          </Button>
          <Button className="font-bold px-10 shadow-lg shadow-primary/20" onClick={() => onSave(items)}>
-            <Send className="w-4 h-4 mr-2" /> Issue Prescription
+            <Send className="w-4 h-4 ml-2" /> إصدار الوصفة الطبية
          </Button>
       </div>
     </div>
