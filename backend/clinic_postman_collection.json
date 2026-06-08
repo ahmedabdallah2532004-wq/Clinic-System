@@ -1,0 +1,643 @@
+{
+	"info": {
+		"_postman_id": "b0682fa0-89ab-48d6-95ff-35bc9f626c0a",
+		"name": "Clinic Management System API",
+		"description": "Comprehensive Postman collection for the Clinic Management System. Includes authentication, appointments scheduling/blocking, transactional bulk billing, user profiles, and reporting endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register Patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"patient-test@clinic.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"John Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"gender\": \"MALE\",\n  \"contactNumber\": \"+1555123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"if (responseJson.accessToken) {",
+									"    pm.environment.set(\"auth_token\", responseJson.accessToken);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"patient-test@clinic.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Tokens",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"USER_ID_HERE\",\n  \"refreshToken\": \"REFRESH_TOKEN_HERE\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Create Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": \"PATIENT_ID_HERE\",\n  \"doctorId\": \"DOCTOR_ID_HERE\",\n  \"startTime\": \"2026-06-15T09:00:00.000Z\",\n  \"endTime\": \"2026-06-15T09:30:00.000Z\",\n  \"notes\": \"Routine checkup\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/appointments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reschedule Appointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startTime\": \"2026-06-15T11:00:00.000Z\",\n  \"endTime\": \"2026-06-15T11:30:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/appointments/APPOINTMENT_ID_HERE/reschedule",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointments",
+								"APPOINTMENT_ID_HERE",
+								"reschedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Block Availability Slot",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"doctorId\": \"DOCTOR_ID_HERE\",\n  \"startTime\": \"2026-06-12T13:00:00.000Z\",\n  \"endTime\": \"2026-06-12T14:00:00.000Z\",\n  \"reason\": \"Lunch Break\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/appointments/block-time",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointments",
+								"block-time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Doctor Schedule",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/appointments/doctor/DOCTOR_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointments",
+								"doctor",
+								"DOCTOR_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Appointments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/appointments/patient/PATIENT_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"appointments",
+								"patient",
+								"PATIENT_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Billing & Invoicing",
+			"item": [
+				{
+					"name": "Create Invoice",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": \"PATIENT_ID_HERE\",\n  \"dueDate\": \"2026-07-01\",\n  \"totalAmount\": 150.00,\n  \"items\": [\n    {\n      \"serviceId\": 1,\n      \"quantity\": 1,\n      \"unitPrice\": 150.00\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/billing/invoices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"billing",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Settle Single Invoice",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoiceId\": \"INVOICE_ID_HERE\",\n  \"amount\": 150.00,\n  \"method\": \"CARD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/billing/payments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"billing",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Settle Bulk Invoices (Transactional)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoiceIds\": [\n    \"INVOICE_ID_1\",\n    \"INVOICE_ID_2\"\n  ],\n  \"method\": \"CARD\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/billing/payments/bulk",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"billing",
+								"payments",
+								"bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Invoices",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/billing/invoices/patient/PATIENT_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"billing",
+								"invoices",
+								"patient",
+								"PATIENT_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export Financial CSV Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/billing/export/csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"billing",
+								"export",
+								"csv"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users & Profile",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Johnathan Doe\",\n  \"contactNumber\": \"+1555999888\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reports (PDFs)",
+			"item": [
+				{
+					"name": "Download Invoice PDF",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/reports/invoice/INVOICE_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports",
+								"invoice",
+								"INVOICE_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Prescription PDF",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/reports/prescription/PRESCRIPTION_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports",
+								"prescription",
+								"PRESCRIPTION_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Doctor Daily Schedule PDF",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/reports/doctor-daily/DOCTOR_ID_HERE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports",
+								"doctor-daily",
+								"DOCTOR_ID_HERE"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3001",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
