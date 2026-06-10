@@ -157,19 +157,6 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Copy docker-compose.yml to Server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          source: "docker-compose.yml"
-          target: ${{ secrets.DEPLOY_PATH }}
-
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -200,12 +187,58 @@ jobs:
             echo "Using Docker command: $DOCKER_CMD"
             echo "Using Docker Compose command: $DOCKER_COMPOSE_CMD"
 
-            echo "Logging into GitHub Container Registry..."
-            echo "${{ secrets.GITHUB_TOKEN }}" | $DOCKER_CMD login ghcr.io -u ${{ github.actor }} --password-stdin
-            
             echo "Navigating to deployment directory..."
             mkdir -p ${{ secrets.DEPLOY_PATH }}
             cd ${{ secrets.DEPLOY_PATH }}
+
+            echo "Writing docker-compose.yml directly..."
+            cat << 'EOF' > docker-compose.yml
+            services:
+              db:
+                image: postgres:15
+                restart: always
+                environment:
+                  POSTGRES_USER: postgres
+                  POSTGRES_PASSWORD: password
+                  POSTGRES_DB: clinic_db
+                ports:
+                  - "5432:5432"
+                volumes:
+                  - postgres_data:/var/lib/postgresql/data
+            
+              backend:
+                image: ghcr.io/ahmedabdallah2532004-wq/clinic-system-backend:latest
+                restart: always
+                ports:
+                  - "3001:3001"
+                depends_on:
+                  - db
+                environment:
+                  - DATABASE_URL=postgresql://postgres:password@db:5432/clinic_db?schema=public
+                  - PORT=3001
+                  - JWT_SECRET=supersecretjwtkey123
+                volumes:
+                  - ./backend/uploads:/app/uploads
+            
+              frontend:
+                image: ghcr.io/ahmedabdallah2532004-wq/clinic-system-frontend:latest
+                restart: always
+                ports:
+                  - "3000:3000"
+                depends_on:
+                  - backend
+                environment:
+                  - NEXT_PUBLIC_API_URL=http://localhost:3001
+            
+            volumes:
+              postgres_data:
+            EOF
+
+            echo "Creating uploads directory..."
+            mkdir -p backend/uploads
+
+            echo "Logging into GitHub Container Registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | $DOCKER_CMD login ghcr.io -u ${{ github.actor }} --password-stdin
             
             echo "Pulling latest Docker images..."
             $DOCKER_COMPOSE_CMD pull
