@@ -192,7 +192,7 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
 
             echo "Writing docker-compose.yml directly..."
-            cat << 'EOF' > docker-compose.yml
+            cat << 'EOF' | sed 's/^            //' > docker-compose.yml
             services:
               db:
                 image: postgres:15
