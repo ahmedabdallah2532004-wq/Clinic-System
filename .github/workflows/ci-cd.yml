@@ -157,6 +157,19 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.yml to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "docker-compose.yml"
+          target: ${{ secrets.DEPLOY_PATH }}
+
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -165,17 +178,40 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
+            echo "Determining Docker command permissions..."
+            if docker ps >/dev/null 2>&1; then
+              DOCKER_CMD="docker"
+            elif sudo docker ps >/dev/null 2>&1; then
+              DOCKER_CMD="sudo docker"
+            else
+              echo "Error: docker command not accessible (even with sudo)."
+              exit 1
+            fi
+
+            if $DOCKER_CMD compose version >/dev/null 2>&1; then
+              DOCKER_COMPOSE_CMD="$DOCKER_CMD compose"
+            elif $DOCKER_CMD-compose version >/dev/null 2>&1; then
+              DOCKER_COMPOSE_CMD="$DOCKER_CMD-compose"
+            else
+              echo "Error: docker compose command not found."
+              exit 1
+            fi
+
+            echo "Using Docker command: $DOCKER_CMD"
+            echo "Using Docker Compose command: $DOCKER_COMPOSE_CMD"
+
             echo "Logging into GitHub Container Registry..."
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | $DOCKER_CMD login ghcr.io -u ${{ github.actor }} --password-stdin
             
             echo "Navigating to deployment directory..."
+            mkdir -p ${{ secrets.DEPLOY_PATH }}
             cd ${{ secrets.DEPLOY_PATH }}
             
             echo "Pulling latest Docker images..."
-            docker compose pull
+            $DOCKER_COMPOSE_CMD pull
             
             echo "Restarting service containers..."
-            docker compose up -d
+            $DOCKER_COMPOSE_CMD up -d
             
             echo "Pruning unused images to save disk space..."
-            docker image prune -f
+            $DOCKER_CMD image prune -f
