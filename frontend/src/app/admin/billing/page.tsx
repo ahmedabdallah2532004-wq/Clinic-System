@@ -6,11 +6,9 @@ import { DataTable } from '@/components/shared/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { 
-  DollarSign, 
   Clock, 
   CheckCircle2, 
   AlertCircle, 
-  Filter, 
   Download, 
   Plus,
   Eye,
@@ -26,7 +24,7 @@ import api from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Combobox } from '@/components/ui/Combobox';
-import { Input } from '@/components/ui/Input';
+
 import { InvoicePrintView } from '@/components/billing/InvoicePrintView';
 
 export default function BillingPage() {

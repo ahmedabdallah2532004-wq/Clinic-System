@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import CalendarView from '@/components/calendar/CalendarView';
 import { AppointmentDetailModal } from '@/components/calendar/AppointmentDetailModal';
-import { Plus, Search, Filter, Download, Calendar as CalendarIcon, List, Clock, User, X, CheckCircle2 } from 'lucide-react';
+import { Plus, Search, Download, Calendar as CalendarIcon, List, Clock, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';

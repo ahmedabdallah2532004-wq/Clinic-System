@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, UserPlus, User, Calendar, Phone, MapPin, Activity, CheckCircle2, CreditCard } from 'lucide-react';
+import { X, UserPlus, Activity, CreditCard, User, Calendar, Phone, MapPin, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

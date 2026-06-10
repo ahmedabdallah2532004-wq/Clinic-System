@@ -9,6 +9,7 @@ on:
 env:
   BACKEND_IMAGE_NAME: ghcr.io/ahmedabdallah2532004-wq/clinic-system-backend
   FRONTEND_IMAGE_NAME: ghcr.io/ahmedabdallah2532004-wq/clinic-system-frontend
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 permissions:
   contents: read
@@ -29,7 +30,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -126,7 +127,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Backend Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -138,7 +139,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and Push Frontend Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile

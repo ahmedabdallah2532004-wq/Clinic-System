@@ -7,10 +7,8 @@ import {
   FileText, 
   CreditCard, 
   Clock,
-  ExternalLink,
   Download,
-  Calendar,
-  AlertCircle
+  Calendar
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -18,7 +16,7 @@ import { useAuthStore } from '@/store/authStore';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
+
 import { useToast } from '@/hooks/useToast';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent } from '@/components/ui/Dialog';

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import CalendarView from '@/components/calendar/CalendarView';
-import { Plus, UserPlus, User, CreditCard, Search, CheckCircle2, Clock, Activity, Printer, Eye } from 'lucide-react';
+import { Plus, UserPlus, User, CreditCard, Search, CheckCircle2, Clock, Activity, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -34,7 +34,7 @@ export default function ReceptionistDashboard() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const [printInvoiceData, setPrintInvoiceData] = useState<any>(null);
+  const [printInvoiceData, _setPrintInvoiceData] = useState<any>(null);
 
   // Fetch all appointments for the calendar
   const { data: appointments } = useQuery({
@@ -95,7 +95,7 @@ export default function ReceptionistDashboard() {
     handleSubmit: handleBookingSubmit,
     reset: resetBooking,
     setValue: setBookingValue,
-    watch: watchBooking,
+    watch: _watchBooking,
     formState: { errors: bookingErrors }
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),

@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileText, User, Calendar, Activity, Pill, Clock, ArrowLeft, Download, ExternalLink, Printer, Paperclip } from 'lucide-react';
+import { X, FileText, User, Calendar, Activity, Pill, Clock, Download, ExternalLink, Printer, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+
 import { PrescriptionPrintView } from './PrescriptionPrintView';
 
 interface PatientMedicalFileModalProps {
@@ -111,7 +111,7 @@ export const PatientMedicalFileModal = ({ isOpen, onClose, patientId }: PatientM
                              {patient?.encounters?.length === 0 ? (
                                 <p className="text-sm font-bold text-muted-foreground italic mr-8">لا توجد زيارات سابقة مسجلة.</p>
                              ) : (
-                               patient?.encounters?.map((enc: any, idx: number) => (
+                               patient?.encounters?.map((enc: any) => (
                                  <div key={enc.id} className="relative mr-8 group">
                                     <div className="absolute -right-10 top-2 w-4 h-4 rounded-full bg-white border-2 border-primary shadow-sm z-10 group-hover:scale-125 transition-transform" />
                                     <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border sub-border shadow-sm hover:shadow-xl transition-all">

@@ -8,7 +8,6 @@ import {
   LayoutDashboard, 
   Users, 
   Calendar, 
-  UserSquare2, 
   FileText, 
   CreditCard, 
   BarChart3, 

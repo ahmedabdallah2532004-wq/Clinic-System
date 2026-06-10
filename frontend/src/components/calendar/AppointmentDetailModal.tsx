@@ -16,7 +16,7 @@ interface AppointmentDetailModalProps {
 export const AppointmentDetailModal = ({ isOpen, onClose, event, onDelete, onStatusUpdate }: AppointmentDetailModalProps) => {
   if (!event) return null;
 
-  const { title, start, end, extendedProps } = event;
+  const { title, start, extendedProps } = event;
 
   return (
     <AnimatePresence>

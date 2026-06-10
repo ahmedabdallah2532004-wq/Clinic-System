@@ -3,10 +3,8 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { 
-  Users, 
   Calendar, 
   Clock, 
-  FileEdit,
   FileText,
   ArrowRight,
   Search as SearchIcon,

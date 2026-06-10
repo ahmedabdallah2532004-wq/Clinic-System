@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Pill, FileText, Send, Printer, Info } from 'lucide-react';
+import { Plus, Trash2, Send, Printer, Info } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -15,7 +15,7 @@ interface PrescriptionItem {
   instructions: string;
 }
 
-export const PrescriptionCreator = ({ patientId, encounterId, onSave }: { patientId: string, encounterId: string, onSave: (data: any) => void }) => {
+export const PrescriptionCreator = ({ patientId: _patientId, encounterId: _encounterId, onSave }: { patientId: string, encounterId: string, onSave: (data: any) => void }) => {
   const [items, setItems] = useState<PrescriptionItem[]>([
     { medicationName: '', dosage: '', frequency: '', duration: '', instructions: '' }
   ]);

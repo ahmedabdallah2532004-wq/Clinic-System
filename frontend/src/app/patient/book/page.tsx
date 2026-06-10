@@ -6,7 +6,6 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import { 
   Stethoscope, 
   Calendar as CalendarIcon, 
-  Clock, 
   ChevronRight, 
   ChevronLeft,
   CheckCircle2,
@@ -18,11 +17,11 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/store/authStore';
+
 
 export default function BookAppointment() {
   const router = useRouter();
-  const { user } = useAuthStore();
+
   const [step, setStep] = useState(1);
   const [bookingData, setBookingData] = useState({
     doctorId: '',

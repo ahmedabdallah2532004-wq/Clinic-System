@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Stethoscope, ArrowRight, Lock, Mail, User, ShieldCheck, BriefcaseMedical } from 'lucide-react';
+import { Stethoscope, ArrowRight, User, ShieldCheck, BriefcaseMedical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';

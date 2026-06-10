@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Stethoscope, ArrowRight, Lock, Mail, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';
 

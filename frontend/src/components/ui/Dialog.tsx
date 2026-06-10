@@ -41,7 +41,7 @@ interface DialogContentProps {
   onClose?: () => void;
 }
 
-export const DialogContent = ({ children, className, dir, onClose }: DialogContentProps) => {
+export const DialogContent = ({ children, className, dir, onClose: _onClose }: DialogContentProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 40 }}
